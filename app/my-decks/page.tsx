@@ -1,5 +1,6 @@
 import CreateDeck from "@/components/ui/create-deck"
 import { getDecks } from "@/lib/actions"
+import { DeckCard } from "@/components/ui/deck-card"
 
 export default async function MyDecksPage() {
     const decks = await getDecks()
@@ -12,19 +13,10 @@ export default async function MyDecksPage() {
                 <CreateDeck />
             </div>
             <div>
-
                 {decks.map((deck: any) => {
+                    console.log(deck)
                     return (
-                        <div key={deck.id} className="flex flex-row justify-between">
-                            <div className="flex flex-col">
-                                <h2>{deck.name}</h2>
-                                <p>{deck.category}</p>
-                            </div>
-                            <div>
-                                <button className="text-primary">Edit</button>
-                                <button className="text-primary">Delete</button>
-                            </div>
-                        </div>
+                        <DeckCard {...deck} />
                     )
                 })}
             </div>

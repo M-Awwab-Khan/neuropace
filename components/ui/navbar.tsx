@@ -8,6 +8,9 @@ import { UserButton } from "@clerk/nextjs"
 import { SignedIn } from "@clerk/nextjs"
 import { SignedOut } from "@clerk/nextjs"
 
+import Link from 'next/link'
+
+
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -31,7 +34,9 @@ export default function Navbar() {
                             </SignedOut>
                             <div className="flex flex-row space-x-5">
                                 <SignedIn>
-                                    <Button>My Decks</Button>
+                                    <Link href="/my-decks">
+                                        <Button>My Decks</Button>
+                                    </Link>
                                 </SignedIn>
                                 <UserButton />
                             </div>
