@@ -2,12 +2,17 @@
 import { useState } from "react"
 import { Brain, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { SignInButton } from "@clerk/nextjs"
+import { SignUpButton } from "@clerk/nextjs"
+import { UserButton } from "@clerk/nextjs"
+import { SignedIn } from "@clerk/nextjs"
+import { SignedOut } from "@clerk/nextjs"
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md shadow-lg">
+        <nav className="top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
@@ -20,9 +25,16 @@ export default function Navbar() {
                     </div>
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">
-                            <Button variant="ghost">Login</Button>
-                            <Button variant="ghost">Sign Up</Button>
-                            <Button>My Decks</Button>
+                            <SignedOut>
+                                <SignInButton />
+                                <SignUpButton />
+                            </SignedOut>
+                            <div className="flex flex-row space-x-5">
+                                <SignedIn>
+                                    <Button>My Decks</Button>
+                                </SignedIn>
+                                <UserButton />
+                            </div>
                         </div>
                     </div>
                     <div className="md:hidden">

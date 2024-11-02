@@ -4,8 +4,6 @@ import Navbar from "@/components/ui/navbar"
 export default function HeroSection() {
     return (
         <>
-            <Navbar />
-
             <section className="relative overflow-hidden bg-gradient-to-b from-primary-50 to-background py-20 sm:py-32">
                 <div className="absolute inset-0 bg-grid-primary/[0.03] bg-[size:60px_60px]" />
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
