@@ -8,11 +8,11 @@ export default async function MyDecksPage() {
 
         <main className="container mx-auto mt-6">
             <div className="flex flex-row container justify-between">
-                <h1 className="text-2xl">My Decks</h1>
+                <h1 className="text-2xl mt-5 font-bold">My Decks</h1>
 
                 <CreateDeck />
             </div>
-            <div>
+            <div className=" mt-5 flex flex-wrap gap-5">
                 {decks.map((deck: any) => {
                     console.log(deck)
                     return (

@@ -7,7 +7,6 @@ import { SignUpButton } from "@clerk/nextjs"
 import { UserButton } from "@clerk/nextjs"
 import { SignedIn } from "@clerk/nextjs"
 import { SignedOut } from "@clerk/nextjs"
-
 import Link from 'next/link'
 
 
@@ -20,10 +19,12 @@ export default function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
                         <a href="#" className="flex-shrink-0">
-                            <div className="flex items-center">
-                                <Brain className="h-8 w-8 text-primary" />
-                                <span className="ml-2 text-xl font-bold text-primary">NeuroPace</span>
-                            </div>
+                            <Link href='/'>
+                                <div className="flex items-center">
+                                    <Brain className="h-8 w-8 text-primary" />
+                                    <span className="ml-2 text-xl font-bold text-primary">NeuroPace</span>
+                                </div>
+                            </Link>
                         </a>
                     </div>
                     <div className="hidden md:block">
