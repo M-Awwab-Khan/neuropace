@@ -53,7 +53,7 @@ export default function DeleteDeck({
             onClick={handleDelete}
             disabled={deletingDeck}
           >
-            Delete
+            {deletingDeck ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

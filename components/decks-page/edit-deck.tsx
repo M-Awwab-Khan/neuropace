@@ -95,7 +95,7 @@ export default function EditDeck({
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>
-              Update
+              {isLoading ? "Saving..." : "Save"}
             </Button>
           </DialogFooter>
         </form>

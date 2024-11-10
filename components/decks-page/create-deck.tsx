@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createDeckSchema } from "@/lib/schema";
@@ -35,6 +36,7 @@ export default function CreateDeck({
   } = useForm<z.infer<typeof createDeckSchema>>({
     resolver: zodResolver(createDeckSchema),
   });
+  const [open, setIsOpen] = useState(false);
 
   const isLoading = formState.isSubmitting;
 
@@ -42,10 +44,11 @@ export default function CreateDeck({
     const createddeck = await createDeck(data);
     onDeckCreated(createddeck);
     reset();
+    setIsOpen(false);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -85,7 +88,7 @@ export default function CreateDeck({
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save"}
+              {isLoading ? "Creating..." : "Create"}
             </Button>
           </DialogFooter>
         </form>
