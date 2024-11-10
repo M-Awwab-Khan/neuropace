@@ -7,9 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "./progress";
+import { Progress } from "@/components/ui/progress";
 import { Edit2, Trash2, CalendarClock } from "lucide-react";
-import { updateDeck, deleteDeck } from "@/lib/actions";
 import EditDeck from "./edit-deck";
 import DeleteDeck from "./delete-deck";
 

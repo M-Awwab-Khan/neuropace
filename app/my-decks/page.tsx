@@ -1,4 +1,4 @@
-import Decks from "@/components/ui/decks";
+import Decks from "@/components/decks-page/decks";
 
 export default async function MyDecksPage() {
   return (

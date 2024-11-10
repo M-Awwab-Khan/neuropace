@@ -1,5 +1,5 @@
 "use client";
-import { DeckCard } from "@/components/ui/deck-card";
+import { DeckCard } from "@/components/decks-page/deck-card";
 import { useState, useEffect } from "react";
 import { getDecks } from "@/lib/actions";
 import { Button } from "@/components/ui/button";

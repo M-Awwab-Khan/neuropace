@@ -8,10 +8,10 @@ import {
   DialogHeader,
   DialogTrigger,
   DialogTitle,
-} from "./dialog";
-import { Button } from "./button";
-import { Input } from "./input";
-import { Label } from "./label";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { createDeckSchema } from "@/lib/schema";
