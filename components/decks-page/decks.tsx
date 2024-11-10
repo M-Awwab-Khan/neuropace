@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { createDeck } from "@/lib/actions";
 
-export default function Decks() {
+export default function Decks({ userId }: { userId: string }) {
   const [decks, setDecks] = useState<Deck[]>([]);
   const [sortOrder, setSortOrder] = useState<string>("A-Z");
   const [loading, setLoading] = useState<boolean>(true);
@@ -108,6 +108,7 @@ export default function Decks() {
               </Button>
             }
             onDeckCreated={(deck) => setDecks([...decks, deck])}
+            userId={userId}
           />
         </div>
       </div>
@@ -124,6 +125,7 @@ export default function Decks() {
               key={id}
               name={name}
               category={category}
+              userId={userId}
               onDeckDeleted={onDeckDeleted}
               onDeckUpdated={onDeckUpdated}
               id={id}

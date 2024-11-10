@@ -42,6 +42,7 @@ export default function EditDeck({
     defaultValues: {
       name: deck.name,
       category: deck.category,
+      userId: deck.userId,
     },
     mode: "onBlur",
   });

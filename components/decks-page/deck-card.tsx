@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -14,6 +13,7 @@ import DeleteDeck from "./delete-deck";
 
 interface DeckCardProps {
   id: string;
+  userId: string;
   name: string;
   category: string;
   onDeckUpdated: (deck: any) => void;
@@ -22,6 +22,7 @@ interface DeckCardProps {
 
 export function DeckCard({
   id,
+  userId,
   name,
   category,
   onDeckUpdated,
@@ -45,7 +46,7 @@ export function DeckCard({
             </Button>
           }
           onDeckUpdated={onDeckUpdated}
-          deck={{ id, name, category }}
+          deck={{ id, userId, name, category }}
         />
 
         <DeleteDeck
@@ -55,7 +56,7 @@ export function DeckCard({
             </Button>
           }
           onDeckDeleted={onDeckDeleted}
-          deck={{ id, name, category }}
+          deck={{ id, userId, name, category }}
         />
       </CardFooter>
       <Progress value={30} />

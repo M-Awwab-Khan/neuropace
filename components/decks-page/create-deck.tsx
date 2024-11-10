@@ -21,11 +21,13 @@ import { z } from "zod";
 interface CreateDeckProps {
   trigger: React.ReactNode;
   onDeckCreated: (deck: any) => void;
+  userId: string;
 }
 
 export default function CreateDeck({
   trigger,
   onDeckCreated,
+  userId,
 }: CreateDeckProps) {
   const {
     register,
@@ -35,6 +37,11 @@ export default function CreateDeck({
     reset,
   } = useForm<z.infer<typeof createDeckSchema>>({
     resolver: zodResolver(createDeckSchema),
+    defaultValues: {
+      name: "",
+      category: "",
+      userId: userId,
+    },
   });
   const [open, setIsOpen] = useState(false);
 

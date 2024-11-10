@@ -10,21 +10,22 @@ async function seedDecks() {
     await client.sql`
         CREATE TABLE IF NOT EXISTS decks (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            user_id TEXT NOT NULL,
             name TEXT NOT NULL,
             category TEXT NOT NULL
         )
     `
 
-    const insertedDecks = await Promise.all(decks.map((deck: any) => {
-        return client.sql`
-            INSERT INTO decks (name, category)
-            VALUES (${deck.name}, ${deck.category})
-            RETURNING *
-        `
-    })
-    )
+    // const insertedDecks = await Promise.all(decks.map((deck: any) => {
+    //     return client.sql`
+    //         INSERT INTO decks (name, category)
+    //         VALUES (${deck.name}, ${deck.category})
+    //         RETURNING *
+    //     `
+    // })
+    // )
 
-    return insertedDecks;
+    // return insertedDecks;
 }
 
 export async function GET() {
