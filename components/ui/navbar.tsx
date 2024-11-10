@@ -7,8 +7,9 @@ import { SignUpButton } from "@clerk/nextjs";
 import { UserButton } from "@clerk/nextjs";
 import { SignedIn } from "@clerk/nextjs";
 import { SignedOut } from "@clerk/nextjs";
+import clsx from "clsx";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
-
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -87,3 +88,60 @@ export default function Navbar() {
     </nav>
   );
 }
+
+const NavItem = ({
+  href,
+  children,
+}: React.PropsWithChildren<{ href: string }>) => {
+  const isActive = usePathname() === href;
+
+  return (
+    <li>
+      <Link
+        href={href}
+        className={clsx(
+          "relative block px-3 py-2 transition",
+          isActive ? "text-primary" : "hover:text-primary"
+        )}
+      >
+        {children}
+      </Link>
+    </li>
+  );
+};
+
+export const DesktopNavigation = (
+  props: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+) => {
+  return (
+    <nav {...props} className="max-w-4xl min-w-[500px]">
+      <ul className="flex justify-between items-center rounded-full bg-white/90 px-3 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10">
+        <NavItem href="/">
+          <div className="flex items-center">
+            <Brain className="h-6 w-6 text-primary" />
+            <span className="ml-2 text-lg font-bold text-primary">
+              NeuroPace
+            </span>
+          </div>
+        </NavItem>
+        <div className="flex justify-items-center justify-center items-center">
+          <NavItem href="/">Home</NavItem>
+          <NavItem href="/my-decks">My Decks</NavItem>
+          <SignedOut>
+            <NavItem href="#">
+              <SignInButton mode="modal" />
+            </NavItem>
+            <NavItem href="#">
+              <SignUpButton mode="modal" />
+            </NavItem>
+          </SignedOut>
+          <SignedIn>
+            <NavItem href="#">
+              <UserButton />
+            </NavItem>
+          </SignedIn>
+        </div>
+      </ul>
+    </nav>
+  );
+};

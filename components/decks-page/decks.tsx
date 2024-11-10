@@ -9,6 +9,7 @@ import { Deck } from "@/lib/types";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
+import Image from "next/image";
 import {
   Select,
   SelectContent,
@@ -18,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createDeck } from "@/lib/actions";
+import NoDecksIllustration from "@/public/noDecks.svg";
 
 export default function Decks({ userId }: { userId: string }) {
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -131,6 +133,26 @@ export default function Decks({ userId }: { userId: string }) {
               id={id}
             />
           ))}
+        </div>
+      )}
+      {decks.length === 0 && !loading && (
+        <div className="flex flex-col items-center justify-center mt-10">
+          <Image
+            src={NoDecksIllustration}
+            alt="No decks"
+            className="w-[200px] h-[200px]"
+          />
+          <p className="text-md mt-5">You don't have any decks yet</p>
+          <CreateDeck
+            trigger={
+              <Button className="mt-5">
+                <Plus className="h-10 w-10" />
+                Create Deck
+              </Button>
+            }
+            onDeckCreated={(deck) => setDecks([...decks, deck])}
+            userId={userId}
+          />
         </div>
       )}
     </div>
