@@ -9,6 +9,7 @@ import { Deck } from "@/lib/types";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
+import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import {
   Select,
@@ -27,10 +28,11 @@ export default function Decks({ userId }: { userId: string }) {
   const [loading, setLoading] = useState<boolean>(true);
   const { toast } = useToast();
   const [deletedDeck, setDeletedDeck] = useState<Deck | null>(null);
+  const [filteredDecks, setFilteredDecks] = useState<Deck[]>(decks);
 
   const handleSortChange = (value: string) => {
     setSortOrder(value);
-    setDecks((prevDecks) => {
+    setFilteredDecks((prevDecks) => {
       const sortedDecks = [...prevDecks];
       sortedDecks.sort((a, b) => {
         if (value === "A-Z") {
@@ -47,6 +49,7 @@ export default function Decks({ userId }: { userId: string }) {
     const fetchDecks = async () => {
       const decks: any = await getDecks();
       setDecks(decks);
+      setFilteredDecks(decks);
       setLoading(false);
     };
     fetchDecks();
@@ -86,11 +89,24 @@ export default function Decks({ userId }: { userId: string }) {
     });
   };
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = event.target.value;
+    if (searchValue === "") {
+      return setFilteredDecks(decks);
+    }
+    setFilteredDecks(
+      decks.filter((deck) =>
+        deck.name.toLowerCase().includes(searchValue.toLowerCase())
+      )
+    );
+  };
+
   return (
     <div>
-      <div className="flex flex-row container justify-between items-center">
+      <div className="flex flex-row pt-5 container justify-between items-center">
         <h1 className="text-3xl font-bold">My Decks</h1>
         <div className="flex space-x-3">
+          <Input placeholder="Search" onChange={handleSearch} />
           <Select onValueChange={handleSortChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />
@@ -106,7 +122,6 @@ export default function Decks({ userId }: { userId: string }) {
             trigger={
               <Button>
                 <Plus className="h-10 w-10" />
-                Create Deck
               </Button>
             }
             onDeckCreated={(deck) => setDecks([...decks, deck])}
@@ -122,7 +137,7 @@ export default function Decks({ userId }: { userId: string }) {
         </div>
       ) : (
         <div className="mt-10 flex flex-wrap gap-5">
-          {decks.map(({ id, name, category }) => (
+          {filteredDecks.map(({ id, name, category }) => (
             <DeckCard
               key={id}
               name={name}
