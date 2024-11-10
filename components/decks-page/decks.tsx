@@ -24,14 +24,12 @@ import NoDecksIllustration from "@/public/noDecks.svg";
 
 export default function Decks({ userId }: { userId: string }) {
   const [decks, setDecks] = useState<Deck[]>([]);
-  const [sortOrder, setSortOrder] = useState<string>("A-Z");
   const [loading, setLoading] = useState<boolean>(true);
   const { toast } = useToast();
   const [deletedDeck, setDeletedDeck] = useState<Deck | null>(null);
   const [filteredDecks, setFilteredDecks] = useState<Deck[]>(decks);
 
   const handleSortChange = (value: string) => {
-    setSortOrder(value);
     setFilteredDecks((prevDecks) => {
       const sortedDecks = [...prevDecks];
       sortedDecks.sort((a, b) => {
@@ -47,13 +45,17 @@ export default function Decks({ userId }: { userId: string }) {
 
   useEffect(() => {
     const fetchDecks = async () => {
-      const decks: any = await getDecks();
+      const decks = (await getDecks()) as Deck[];
       setDecks(decks);
       setFilteredDecks(decks);
       setLoading(false);
     };
     fetchDecks();
   }, []);
+
+  useEffect(() => {
+    setFilteredDecks(decks);
+  }, [decks]);
 
   const onDeckDeleted = (deckId: string) => {
     const deckToDelete = decks.find((deck) => deck.id === deckId);
@@ -68,9 +70,13 @@ export default function Decks({ userId }: { userId: string }) {
         <ToastAction
           altText="Undo"
           onClick={async () => {
-            setDecks((prevDecks) => [...prevDecks, deckToDelete]);
+            const createdDeck = (await createDeck({
+              name: deckToDelete.name,
+              category: deckToDelete.category,
+              userId: userId,
+            })) as Deck;
+            setDecks((prevDecks) => [...prevDecks, createdDeck]);
             setDeletedDeck(null);
-            await createDeck(deckToDelete);
           }}
         >
           Undo

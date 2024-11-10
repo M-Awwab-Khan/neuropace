@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
 
 interface CreateDeckProps {
   trigger: React.ReactNode;
@@ -43,6 +44,7 @@ export default function CreateDeck({
       userId: userId,
     },
   });
+  const { toast } = useToast();
   const [open, setIsOpen] = useState(false);
 
   const isLoading = formState.isSubmitting;
@@ -52,6 +54,10 @@ export default function CreateDeck({
     onDeckCreated(createddeck);
     reset();
     setIsOpen(false);
+    toast({
+      title: "Deck created",
+      description: "Your deck has been created successfully.",
+    });
   };
 
   return (
