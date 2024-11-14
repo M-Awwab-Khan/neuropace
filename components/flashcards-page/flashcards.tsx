@@ -8,6 +8,8 @@ import CreateFlashcard from "./create-flashcard";
 import EditFlashcard from "./edit-flashcard";
 import { Flashcard } from "@/lib/types";
 import DeleteFlashcard from "./delete-flashcard";
+import NoFlashcardsIllustration from "@/public/noFlashcards.svg";
+import Image from "next/image";
 
 export default function Flashcards({
   userId,
@@ -115,6 +117,25 @@ export default function Flashcards({
           </motion.div>
         ))}
       </div>
+      {flashcards.length === 0 && (
+        <div className="flex gap-5 flex-col items-center justify-center mt-10">
+          <Image
+            src={NoFlashcardsIllustration}
+            alt="No decks"
+            className="w-[300px] h-[300px]"
+          />
+          <p className="text-md mt-5">You don't have any decks yet</p>
+          <CreateFlashcard
+            deckId={deckId}
+            onFlashcardCreated={handleCreateCard}
+            trigger={
+              <Button className="flex items-center">
+                <Plus className="mr-2 h-4 w-4" /> Create Flashcard
+              </Button>
+            }
+          />
+        </div>
+      )}
     </div>
   );
 }
