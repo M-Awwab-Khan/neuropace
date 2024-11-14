@@ -44,7 +44,13 @@ export default function DeleteDeck({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setDeletingDeck(false)}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setDeletingDeck(false);
+              setIsOpen(false);
+            }}
+          >
             Cancel
           </Button>
           <Button

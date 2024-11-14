@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Edit2, Trash2, CalendarClock } from "lucide-react";
 import EditDeck from "./edit-deck";
 import DeleteDeck from "./delete-deck";
+import Link from "next/link";
 
 interface DeckCardProps {
   id: string;
@@ -29,11 +30,13 @@ export function DeckCard({
   onDeckDeleted,
 }: DeckCardProps) {
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>{name}</CardTitle>
-        <CardDescription>{category}</CardDescription>
-      </CardHeader>
+    <Card className="w-[350px] hover:shadow-lg transition-shadow duration-200">
+      <Link href={`/my-decks/${id}`}>
+        <CardHeader>
+          <CardTitle>{name}</CardTitle>
+          <CardDescription>{category}</CardDescription>
+        </CardHeader>
+      </Link>
       <div className="flex flex-row gap-2 pl-6 text-sm text-muted-foreground">
         <CalendarClock className="h-5 w-5" />
         12/12/2021
