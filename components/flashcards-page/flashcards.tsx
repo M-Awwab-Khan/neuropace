@@ -28,13 +28,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { getFlashcards } from "@/lib/actions";
 import CreateFlashcard from "./create-flashcard";
-
-interface Flashcard {
-  id: number;
-  question: string;
-  answer: string;
-}
-
+import EditFlashcard from "./edit-flashcard";
+import { Flashcard } from "@/lib/types";
 export default function Flashcards({
   userId,
   deckId,
@@ -43,47 +38,36 @@ export default function Flashcards({
   deckId: string;
 }) {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [flippedCards, setFlippedCards] = useState<number[]>([]);
+  const [flippedCards, setFlippedCards] = useState<string[]>([]);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
-  const [newCard, setNewCard] = useState<Omit<Flashcard, "id">>({
-    question: "",
-    answer: "",
-  });
 
   useEffect(() => {
     const fetchFlashcards = async () => {
-      const flashcards = await getFlashcards(deckId);
+      const flashcards = (await getFlashcards(deckId)) as Flashcard[];
       setFlashcards(flashcards);
     };
     fetchFlashcards();
   }, []);
 
-  const handleFlip = (id: number) => {
+  const handleFlip = (id: string) => {
     setFlippedCards((prev) =>
       prev.includes(id) ? prev.filter((cardId) => cardId !== id) : [...prev, id]
     );
   };
 
-  const handleEdit = (card: Flashcard) => {
-    setEditingCard(card);
-  };
-
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     setFlashcards((prev) => prev.filter((card) => card.id !== id));
   };
 
-  const handleSaveEdit = () => {
-    if (editingCard) {
-      setFlashcards((prev) =>
-        prev.map((card) => (card.id === editingCard.id ? editingCard : card))
-      );
-      setEditingCard(null);
-    }
+  const handleSaveEdit = (updatedCard: Flashcard) => {
+    setFlashcards((prev) =>
+      prev.map((card) => (card.id === updatedCard.id ? updatedCard : card))
+    );
+    setEditingCard(null);
   };
 
-  const handleCreateCard = (newCard) => {
+  const handleCreateCard = (newCard: Flashcard) => {
     setFlashcards((prev) => [...prev, { ...newCard }]);
-    setNewCard({ question: "", answer: "" });
   };
 
   return (
@@ -125,71 +109,16 @@ export default function Flashcards({
                   {card.question}
                 </h3>
                 <div className="absolute bottom-4 right-4 flex space-x-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(card);
-                        }}
-                      >
+                  <EditFlashcard
+                    flashcard={card}
+                    onFlashcardUpdated={handleSaveEdit}
+                    trigger={
+                      <Button variant="ghost" size="icon">
                         <Edit className="h-4 w-4" />
                         <span className="sr-only">Edit</span>
                       </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Edit Flashcard</DialogTitle>
-                        <DialogDescription>
-                          Make changes to your flashcard here. Click save when
-                          you're done.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="edit-question" className="text-right">
-                            Question
-                          </Label>
-                          <Input
-                            id="edit-question"
-                            value={editingCard?.question || ""}
-                            onChange={(e) =>
-                              setEditingCard((prev) =>
-                                prev
-                                  ? { ...prev, question: e.target.value }
-                                  : null
-                              )
-                            }
-                            className="col-span-3"
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="edit-answer" className="text-right">
-                            Answer
-                          </Label>
-                          <Input
-                            id="edit-answer"
-                            value={editingCard?.answer || ""}
-                            onChange={(e) =>
-                              setEditingCard((prev) =>
-                                prev
-                                  ? { ...prev, answer: e.target.value }
-                                  : null
-                              )
-                            }
-                            className="col-span-3"
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit" onClick={handleSaveEdit}>
-                          Save changes
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                    }
+                  />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button

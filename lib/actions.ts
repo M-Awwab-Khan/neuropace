@@ -56,3 +56,14 @@ export async function createFlashcard(deckId: string, { question, answer }: { qu
   revalidatePath(`/my-decks/${deckId}`);
   return rows[0];
 }
+
+
+export async function updateFlashcard(id: string, { question, answer }: { question: string; answer: string }) {
+  const { rows } = await sql`
+    UPDATE flashcards
+    SET question = ${question}, answer = ${answer}
+    WHERE id = ${id}
+    RETURNING *
+  `;
+  return rows[0];
+}
