@@ -1,36 +1,14 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Plus, Edit, Trash2, Delete } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { getFlashcards } from "@/lib/actions";
 import CreateFlashcard from "./create-flashcard";
 import EditFlashcard from "./edit-flashcard";
 import { Flashcard } from "@/lib/types";
 import DeleteFlashcard from "./delete-flashcard";
+
 export default function Flashcards({
   userId,
   deckId,
@@ -40,7 +18,6 @@ export default function Flashcards({
 }) {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [flippedCards, setFlippedCards] = useState<string[]>([]);
-  const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -64,7 +41,6 @@ export default function Flashcards({
     setFlashcards((prev) =>
       prev.map((card) => (card.id === updatedCard.id ? updatedCard : card))
     );
-    setEditingCard(null);
   };
 
   const handleCreateCard = (newCard: Flashcard) => {
