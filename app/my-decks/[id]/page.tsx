@@ -3,12 +3,14 @@ import { auth } from "@clerk/nextjs/server";
 export default async function FlashcardsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const deckId = (await params).id;
+
   const { userId } = await auth();
   return (
     <div>
-      <Flashcards userId={userId} deckId={params.id} />
+      <Flashcards userId={userId} deckId={deckId} />
     </div>
   );
 }

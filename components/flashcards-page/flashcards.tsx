@@ -27,6 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { getFlashcards } from "@/lib/actions";
+import CreateFlashcard from "./create-flashcard";
 
 interface Flashcard {
   id: number;
@@ -80,9 +81,8 @@ export default function Flashcards({
     }
   };
 
-  const handleCreateCard = () => {
-    const newId = Math.max(...flashcards.map((card) => card.id), 0) + 1;
-    setFlashcards((prev) => [...prev, { ...newCard, id: newId }]);
+  const handleCreateCard = (newCard) => {
+    setFlashcards((prev) => [...prev, { ...newCard }]);
     setNewCard({ question: "", answer: "" });
   };
 
@@ -90,54 +90,15 @@ export default function Flashcards({
     <div className="container mx-auto px-8 py-12">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Flashcards</h1>
-        <Dialog>
-          <DialogTrigger asChild>
+        <CreateFlashcard
+          deckId={deckId}
+          onFlashcardCreated={handleCreateCard}
+          trigger={
             <Button className="flex items-center">
               <Plus className="mr-2 h-4 w-4" /> Create Flashcard
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create New Flashcard</DialogTitle>
-              <DialogDescription>
-                Add a new question and answer to your flashcard deck.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="question" className="text-right">
-                  Question
-                </Label>
-                <Input
-                  id="question"
-                  value={newCard.question}
-                  onChange={(e) =>
-                    setNewCard({ ...newCard, question: e.target.value })
-                  }
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="answer" className="text-right">
-                  Answer
-                </Label>
-                <Input
-                  id="answer"
-                  value={newCard.answer}
-                  onChange={(e) =>
-                    setNewCard({ ...newCard, answer: e.target.value })
-                  }
-                  className="col-span-3"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" onClick={handleCreateCard}>
-                Create
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          }
+        />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {flashcards.map((card) => (

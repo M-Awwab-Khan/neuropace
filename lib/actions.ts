@@ -53,5 +53,6 @@ export async function createFlashcard(deckId: string, { question, answer }: { qu
     VALUES (${deckId}, ${userId}, ${question}, ${answer})
     RETURNING *
   `;
+  revalidatePath(`/my-decks/${deckId}`);
   return rows[0];
 }
