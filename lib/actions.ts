@@ -67,3 +67,9 @@ export async function updateFlashcard(id: string, { question, answer }: { questi
   `;
   return rows[0];
 }
+
+export async function deleteFlashcard(id: string) {
+      await sql`
+    DELETE FROM flashcards
+    WHERE id=${id}`;
+}
