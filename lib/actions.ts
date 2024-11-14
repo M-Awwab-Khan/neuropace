@@ -37,3 +37,21 @@ export async function deleteDeck(id: string) {
     WHERE id = ${id}
   `;
 }
+
+export async function getFlashcards(deckId: string) {
+  const { rows } = await sql`
+    SELECT * FROM flashcards
+    WHERE deck_id = ${deckId}
+  `;
+  return rows;
+}
+
+export async function createFlashcard(deckId: string, { question, answer }: { question: string; answer: string }) {
+    const { userId } = await auth();
+  const { rows } = await sql`
+    INSERT INTO flashcards (deck_id, user_id, question, answer)
+    VALUES (${deckId}, ${userId}, ${question}, ${answer})
+    RETURNING *
+  `;
+  return rows[0];
+}

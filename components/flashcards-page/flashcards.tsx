@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { getFlashcards } from "@/lib/actions";
 
 interface Flashcard {
   id: number;
@@ -33,25 +34,28 @@ interface Flashcard {
   answer: string;
 }
 
-export default function FlashcardsPage() {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([
-    { id: 1, question: "What is the capital of France?", answer: "Paris" },
-    { id: 2, question: "What is 7 x 8?", answer: "56" },
-    {
-      id: 3,
-      question: "Who wrote 'Romeo and Juliet'?",
-      answer: "William Shakespeare",
-    },
-    { id: 4, question: "What is the chemical symbol for gold?", answer: "Au" },
-    { id: 5, question: "In which year did World War II end?", answer: "1945" },
-  ]);
-
+export default function Flashcards({
+  userId,
+  deckId,
+}: {
+  userId: string;
+  deckId: string;
+}) {
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [newCard, setNewCard] = useState<Omit<Flashcard, "id">>({
     question: "",
     answer: "",
   });
+
+  useEffect(() => {
+    const fetchFlashcards = async () => {
+      const flashcards = await getFlashcards(deckId);
+      setFlashcards(flashcards);
+    };
+    fetchFlashcards();
+  }, []);
 
   const handleFlip = (id: number) => {
     setFlippedCards((prev) =>
@@ -85,7 +89,7 @@ export default function FlashcardsPage() {
   return (
     <div className="container mx-auto px-8 py-12">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-primary">Flashcards</h1>
+        <h1 className="text-3xl font-bold">Flashcards</h1>
         <Dialog>
           <DialogTrigger asChild>
             <Button className="flex items-center">
@@ -156,7 +160,7 @@ export default function FlashcardsPage() {
               }}
             >
               <div className="absolute inset-0 w-full h-full bg-card rounded-lg shadow-lg p-6 [backface-visibility:hidden]">
-                <h3 className="text-xl font-semibold mb-4 text-card-foreground">
+                <h3 className="text-lg font-medium mb-4 text-card-foreground">
                   {card.question}
                 </h3>
                 <div className="absolute bottom-4 right-4 flex space-x-2">
