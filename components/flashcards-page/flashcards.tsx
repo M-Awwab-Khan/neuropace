@@ -10,6 +10,8 @@ import { Flashcard } from "@/lib/types";
 import DeleteFlashcard from "./delete-flashcard";
 import NoFlashcardsIllustration from "@/public/noFlashcards.svg";
 import Image from "next/image";
+import FlashcardReview from "./review-flashcards";
+import { BookOpen } from "lucide-react";
 
 export default function Flashcards({
   userId,
@@ -53,15 +55,25 @@ export default function Flashcards({
     <div className="container mx-auto px-8 py-12">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Flashcards</h1>
-        <CreateFlashcard
-          deckId={deckId}
-          onFlashcardCreated={handleCreateCard}
-          trigger={
-            <Button className="flex items-center">
-              <Plus className="mr-2 h-4 w-4" /> Create Flashcard
-            </Button>
-          }
-        />
+        <div className="flex flex-row gap-2">
+          <FlashcardReview
+            flashcards={flashcards}
+            trigger={
+              <Button className="flex items-center">
+                <BookOpen className="mr-2 h-4 w-4" /> Review Flashcards
+              </Button>
+            }
+          />
+          <CreateFlashcard
+            deckId={deckId}
+            onFlashcardCreated={handleCreateCard}
+            trigger={
+              <Button className="flex items-center">
+                <Plus className="h-4 w-4" />
+              </Button>
+            }
+          />
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {flashcards.map((card) => (
