@@ -11,9 +11,9 @@ export type Flashcard = {
     userId: string;
     question: string;
     answer: string;
-    lastReviewDate: Date;
+    lastReviewDate: string;
     interval: number;
     repetitions: number;
     easeFactor: number;
-    nextReviewDate: Date;
+    nextReviewDate: string;
 };

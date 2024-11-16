@@ -47,7 +47,7 @@ export default function CreateFlashcard({
   const [open, setIsOpen] = useState(false);
   const isLoading = formState.isSubmitting;
   const onSubmit = async (data: z.infer<typeof createFlashcardSchema>) => {
-    const createdFlashcard = await createFlashcard(deckId, data);
+    const createdFlashcard = (await createFlashcard(deckId, data)) as Flashcard;
     onFlashcardCreated(createdFlashcard);
     reset();
     setIsOpen(false);

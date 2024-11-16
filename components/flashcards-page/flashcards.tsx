@@ -12,6 +12,7 @@ import NoFlashcardsIllustration from "@/public/noFlashcards.svg";
 import Image from "next/image";
 import FlashcardReview from "./review-flashcards";
 import { BookOpen } from "lucide-react";
+import FlashcardsSkeleton from "./flashcards-skeleton";
 
 export default function Flashcards({
   userId,
@@ -21,12 +22,15 @@ export default function Flashcards({
   deckId: string;
 }) {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [flippedCards, setFlippedCards] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchFlashcards = async () => {
+      setIsLoading(true);
       const flashcards = (await getFlashcards(deckId)) as Flashcard[];
       setFlashcards(flashcards);
+      setIsLoading(false);
     };
     fetchFlashcards();
   }, []);
@@ -57,7 +61,8 @@ export default function Flashcards({
         <h1 className="text-3xl font-bold">Flashcards</h1>
         <div className="flex flex-row gap-2">
           <FlashcardReview
-            flashcards={flashcards}
+            deckId={deckId}
+            latestFlashcards={flashcards}
             trigger={
               <Button className="flex items-center">
                 <BookOpen className="mr-2 h-4 w-4" /> Review Flashcards
@@ -129,7 +134,8 @@ export default function Flashcards({
           </motion.div>
         ))}
       </div>
-      {flashcards.length === 0 && (
+      {isLoading && <FlashcardsSkeleton />}
+      {flashcards.length === 0 && !isLoading && (
         <div className="flex gap-5 flex-col items-center justify-center mt-10">
           <Image
             src={NoFlashcardsIllustration}

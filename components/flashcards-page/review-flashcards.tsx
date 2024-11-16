@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,89 +15,91 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { BookOpen, CircleCheckBig } from "lucide-react";
+import {
+  getReviewFlashcards,
+  updateReviewFlashcard,
+  superMemo2,
+} from "@/lib/actions";
+import { MinPriorityQueue } from "datastructures-js";
 
 interface FlashcardReviewProps {
-  flashcards: Flashcard[];
+  deckId: string;
   trigger: React.ReactNode;
+  latestFlashcards: Flashcard[];
 }
 
 export default function FlashcardReview({
-  flashcards,
+  deckId,
+  latestFlashcards,
   trigger,
 }: FlashcardReviewProps) {
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [reviewedCards, setReviewedCards] = useState<number[]>([]);
-  const [direction, setDirection] = useState(0);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [currentReviewCardIndex, setCurrentReviewCardIndex] = useState(0);
   const [isReviewCardFlipped, setIsReviewCardFlipped] = useState(false);
-  const [reviewDirection, setReviewDirection] = useState(0);
-  const currentReviewCard = flashcards[currentReviewCardIndex];
-  const reviewProgress = (reviewedCards.length / flashcards.length) * 100;
+  const [priorityQueue, setPriorityQueue] = useState<
+    MinPriorityQueue<Flashcard>
+  >(new MinPriorityQueue());
+  const originalFlashcardCount = latestFlashcards.length; // Tracks the initial count dynamically
 
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
+  useEffect(() => {
+    const fetchFlashcards = async () => {
+      const fetchedFlashcards = (await getReviewFlashcards(
+        deckId
+      )) as Flashcard[];
 
-  const handleDifficultySelection = (difficulty: string) => {
-    console.log(`Card ${currentCardIndex} marked as ${difficulty}`);
-    setReviewedCards([...reviewedCards, currentCardIndex]);
-    goToNextCard();
-  };
+      // Create a priority queue based on `nextReviewDate`
+      setPriorityQueue(
+        MinPriorityQueue.fromArray(fetchedFlashcards, (a) =>
+          new Date(a.nextReviewDate).getTime()
+        )
+      );
 
-  const goToNextCard = () => {
-    if (currentCardIndex < flashcards.length - 1) {
-      setDirection(1);
-      setCurrentCardIndex(currentCardIndex + 1);
-      setIsFlipped(false);
-    }
+      console.log(priorityQueue);
+    };
+    fetchFlashcards();
+  }, [deckId, latestFlashcards]);
+
+  const handleDifficultySelection = async (difficulty: number) => {
+    if (!priorityQueue?.size()) return;
+
+    const currentCard = priorityQueue?.dequeue();
+    console.log(currentCard);
+    const { repetitions, interval, easeFactor, nextReviewDate } =
+      await superMemo2(
+        currentCard.repetitions,
+        currentCard.interval,
+        currentCard.easeFactor,
+        difficulty
+      );
+
+    const updatedFlashcard = {
+      ...currentCard,
+      repetitions,
+      interval,
+      easeFactor,
+      nextReviewDate,
+    };
+    setPriorityQueue(priorityQueue);
+
+    console.log(updatedFlashcard);
+    await updateReviewFlashcard(updatedFlashcard);
+    setIsReviewCardFlipped(false);
   };
 
   const handleReviewFlip = () => {
     setIsReviewCardFlipped(!isReviewCardFlipped);
   };
 
-  const goToNextReviewCard = () => {
-    if (currentReviewCardIndex < flashcards.length - 1) {
-      setReviewDirection(1);
-      setCurrentReviewCardIndex(currentReviewCardIndex + 1);
-      setIsReviewCardFlipped(false);
-    } else {
-      setIsReviewModalOpen(false);
-      setCurrentReviewCardIndex(0);
-      setReviewedCards([]);
-    }
-  };
-
-  const goToPreviousReviewCard = () => {
-    if (currentReviewCardIndex > 0) {
-      setReviewDirection(-1);
-      setCurrentReviewCardIndex(currentReviewCardIndex - 1);
-      setIsReviewCardFlipped(false);
-    }
-  };
-
-  const goToPreviousCard = () => {
-    if (currentCardIndex > 0) {
-      setDirection(-1);
-      setCurrentCardIndex(currentCardIndex - 1);
-      setIsFlipped(false);
-    }
-  };
-
-  const currentCard = flashcards[currentCardIndex];
-  const isReviewComplete = reviewedCards.length === flashcards.length;
-  const progress = (reviewedCards.length / flashcards.length) * 100;
+  const isReviewComplete = priorityQueue?.size() === 0;
+  const reviewProgress =
+    originalFlashcardCount > 0
+      ? ((originalFlashcardCount - priorityQueue?.size()) /
+          originalFlashcardCount) *
+        100
+      : 100;
 
   return (
     <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
-      <DialogTrigger asChild>
-        {/* <Button className="flex items-center">
-          <BookOpen className="mr-2 h-4 w-4" /> Review Flashcards
-        </Button> */}
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Review Flashcards</DialogTitle>
@@ -118,82 +120,60 @@ export default function FlashcardReview({
           <div className="mt-4">
             <Progress value={reviewProgress} className="w-full mb-4" />
             <p className="text-center text-sm text-muted-foreground mb-4">
-              {reviewedCards.length} of {flashcards.length} cards reviewed
+              {originalFlashcardCount - priorityQueue.size()} of{" "}
+              {originalFlashcardCount} cards reviewed
             </p>
             <AnimatePresence mode="wait">
               <motion.div
-                key={currentReviewCardIndex}
-                initial={{ opacity: 0, x: reviewDirection > 0 ? 100 : -100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: reviewDirection > 0 ? -100 : 100 }}
-                transition={{ duration: 0.3 }}
-                className="relative w-full aspect-[3/2]"
+                className="inset-0 w-full h-[300px] cursor-pointer"
+                onClick={handleReviewFlip}
+                initial={false}
+                animate={{ rotateY: isReviewCardFlipped ? 180 : 0 }}
+                transition={{
+                  duration: 0.6,
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20,
+                }}
+                style={{ transformStyle: "preserve-3d" }}
               >
-                <motion.div
-                  className="absolute inset-0 w-full h-full cursor-pointer"
-                  onClick={handleReviewFlip}
-                  initial={false}
-                  animate={{ rotateY: isReviewCardFlipped ? 180 : 0 }}
-                  transition={{
-                    duration: 0.6,
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 20,
-                  }}
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <Card className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
-                    <CardContent className="flex items-center justify-center h-full p-6">
-                      <h3 className="text-2xl font-semibold text-center">
-                        {currentReviewCard.question}
-                      </h3>
-                    </CardContent>
-                  </Card>
-                  <Card className="absolute inset-0 w-full h-full [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                    <CardContent className="flex items-center justify-center h-full p-6">
-                      <p className="text-xl text-center">
-                        {currentReviewCard.answer}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                <Card className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
+                  <CardContent className="flex items-center justify-center h-full p-6">
+                    <h3 className="text-2xl font-semibold text-center">
+                      {priorityQueue.front().question}
+                    </h3>
+                  </CardContent>
+                </Card>
+                <Card className="absolute inset-0 w-full h-full [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                  <CardContent className="flex items-center justify-center h-full p-6">
+                    <p className="text-xl text-center">
+                      {priorityQueue.front().answer}
+                    </p>
+                  </CardContent>
+                </Card>
               </motion.div>
             </AnimatePresence>
-            <div className="flex justify-between items-center mt-4">
-              <Button
-                variant="outline"
-                onClick={goToPreviousReviewCard}
-                disabled={currentReviewCardIndex === 0}
-              >
-                Previous
-              </Button>
+            <div className="flex justify-center mt-4">
               <div className="flex space-x-2">
                 <Button
-                  onClick={() => handleDifficultySelection("easy")}
+                  onClick={() => handleDifficultySelection(5)}
                   className="bg-green-500 hover:bg-green-600 text-white"
                 >
                   Easy
                 </Button>
                 <Button
-                  onClick={() => handleDifficultySelection("medium")}
+                  onClick={() => handleDifficultySelection(3)}
                   className="bg-yellow-500 hover:bg-yellow-600 text-white"
                 >
                   Medium
                 </Button>
                 <Button
-                  onClick={() => handleDifficultySelection("hard")}
+                  onClick={() => handleDifficultySelection(1)}
                   className="bg-red-500 hover:bg-red-600 text-white"
                 >
                   Hard
                 </Button>
               </div>
-              <Button
-                variant="outline"
-                onClick={goToNextReviewCard}
-                disabled={currentReviewCardIndex === flashcards.length - 1}
-              >
-                Next
-              </Button>
             </div>
           </div>
         )}
