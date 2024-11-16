@@ -180,14 +180,16 @@ export default function Flashcards({
           <motion.div
             key={card.id}
             className="relative h-64 cursor-pointer"
-            onClick={() => handleFlip(card.id)}
+            onClick={() => handleFlip(card.id as string)}
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <motion.div
               className="absolute inset-0 w-full h-full [transform-style:preserve-3d]"
               initial={false}
-              animate={{ rotateY: flippedCards.includes(card.id) ? 180 : 0 }}
+              animate={{
+                rotateY: flippedCards.includes(card.id as string) ? 180 : 0,
+              }}
               transition={{
                 duration: 0.6,
                 type: "spring",
@@ -240,6 +242,7 @@ export default function Flashcards({
           <p className="text-md mt-5">You don't have any decks yet</p>
           <CreateFlashcard
             deckId={deckId}
+            userId={userId}
             onFlashcardCreated={handleCreateCard}
             trigger={
               <Button className="flex items-center">

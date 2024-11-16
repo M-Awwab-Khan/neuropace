@@ -47,7 +47,7 @@ export default function DeleteFlashcard({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
             variant="destructive"
-            onClick={() => onDelete(flashcard.id)}
+            onClick={() => onDelete(flashcard.id as string)}
             disabled={deletingDeck}
           >
             {deletingDeck ? "Deleting..." : "Delete"}

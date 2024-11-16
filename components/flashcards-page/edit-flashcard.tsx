@@ -51,7 +51,10 @@ export default function EditFlashcard({
   const isLoading = formState.isSubmitting;
 
   const onSubmit = async (data: z.infer<typeof createFlashcardSchema>) => {
-    const updatedFlashcard = await updateFlashcard(flashcard.id, data);
+    const updatedFlashcard = await updateFlashcard(
+      flashcard.id as string,
+      data
+    );
     onFlashcardUpdated(updatedFlashcard as Flashcard);
     setIsOpen(false);
   };

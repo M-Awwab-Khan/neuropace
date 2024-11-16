@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Brain, Clock, Zap } from "lucide-react";
 import Link from "next/link";
-import Navbar from "@/components/ui/navbar";
 export default function HeroSection() {
   return (
     <>
