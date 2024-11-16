@@ -52,13 +52,13 @@ export default function HeroSection() {
                 <div className="relative space-y-4">
                   {[
                     {
-                      question: "What is the capital of France?",
-                      answer: "Paris",
+                      question: "What is the capital of Czech Republic?",
+                      answer: "Prague",
                     },
                     { question: "What is 7 x 8?", answer: "56" },
                     {
-                      question: "Who wrote 'Romeo and Juliet'?",
-                      answer: "William Shakespeare",
+                      question: "Who wrote 'Tauba Tauba Song'?",
+                      answer: "Enayat UR Rehman",
                     },
                   ].map((card, index) => (
                     <div
