@@ -35,10 +35,11 @@ export default function FlashcardReview({
 }: FlashcardReviewProps) {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isReviewCardFlipped, setIsReviewCardFlipped] = useState(false);
+  const [currentCard, setCurrentCard] = useState<Flashcard | null>(null);
   const [priorityQueue, setPriorityQueue] = useState<
     MinPriorityQueue<Flashcard>
   >(new MinPriorityQueue());
-  const originalFlashcardCount = latestFlashcards.length; // Tracks the initial count dynamically
+  const originalFlashcardCount = latestFlashcards.length;
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -46,7 +47,6 @@ export default function FlashcardReview({
         deckId
       )) as Flashcard[];
 
-      // Create a priority queue based on `nextReviewDate`
       setPriorityQueue(
         MinPriorityQueue.fromArray(fetchedFlashcards, (a) =>
           new Date(a.nextReviewDate).getTime()
@@ -56,31 +56,29 @@ export default function FlashcardReview({
       console.log(priorityQueue);
     };
     fetchFlashcards();
+    setCurrentCard(priorityQueue?.front());
   }, [deckId, latestFlashcards]);
 
   const handleDifficultySelection = async (difficulty: number) => {
     if (!priorityQueue?.size()) return;
 
-    const currentCard = priorityQueue?.dequeue();
-    console.log(currentCard);
+    const dequeuedCard = priorityQueue?.dequeue();
+    setCurrentCard(priorityQueue?.front());
     const { repetitions, interval, easeFactor, nextReviewDate } =
       await superMemo2(
-        currentCard.repetitions,
-        currentCard.interval,
-        currentCard.easeFactor,
+        dequeuedCard.repetitions,
+        dequeuedCard.interval,
+        dequeuedCard.easeFactor,
         difficulty
       );
 
     const updatedFlashcard = {
-      ...currentCard,
+      ...dequeuedCard,
       repetitions,
       interval,
       easeFactor,
       nextReviewDate,
     };
-    setPriorityQueue(priorityQueue);
-
-    console.log(updatedFlashcard);
     await updateReviewFlashcard(updatedFlashcard);
     setIsReviewCardFlipped(false);
   };
@@ -140,15 +138,13 @@ export default function FlashcardReview({
                 <Card className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
                   <CardContent className="flex items-center justify-center h-full p-6">
                     <h3 className="text-2xl font-semibold text-center">
-                      {priorityQueue.front().question}
+                      {currentCard?.question}
                     </h3>
                   </CardContent>
                 </Card>
                 <Card className="absolute inset-0 w-full h-full [transform:rotateY(180deg)] [backface-visibility:hidden]">
                   <CardContent className="flex items-center justify-center h-full p-6">
-                    <p className="text-xl text-center">
-                      {priorityQueue.front().answer}
-                    </p>
+                    <p className="text-xl text-center">{currentCard?.answer}</p>
                   </CardContent>
                 </Card>
               </motion.div>
