@@ -6,12 +6,12 @@ export type Deck = {
 };
 
 export type Flashcard = {
-    id: string;
+    id?: string;
     deckId: string;
     userId: string;
     question: string;
     answer: string;
-    lastReviewDate: string;
+    lastReviewDate?: string;
     interval: number;
     repetitions: number;
     easeFactor: number;

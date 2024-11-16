@@ -9,13 +9,15 @@ export const createDeckSchema = z.object({
 
 export const createFlashcardSchema = z.object({
   id: z.string().optional(),
-  deckId: z.string().optional(),
-  userId: z.string().optional(),
+  deckId: z.string(),
+  userId: z.string(),
   question: z.string().min(1, "Question is required"),
   answer: z.string().min(1, "Answer is required"),
-  lastReviewDate: z.date().optional(),
+  lastReviewDate: z.string().datetime().optional(),
   interval: z.number().default(1), // Default to 1 if not provided
   repetitions: z.number().default(0), // Default to 0 if not provided
   easeFactor: z.number().default(2.5), // Default to 2.5 if not provided
   nextReviewDate: z.string().datetime().default(() => new Date().toISOString()),
 });
+
+export const flashcardsSchema = z.array(createFlashcardSchema);

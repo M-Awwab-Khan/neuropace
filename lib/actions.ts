@@ -123,3 +123,11 @@ export async function updateReviewFlashcard({id, repetitions, interval, easeFact
   `;
   return rows[0];
 }
+
+export async function createFlashcards(deckId: string, flashcards: Flashcard[]) {
+  const { rows } = await sql.query(
+    `INSERT INTO flashcards ("userId", "deckId", "question", "answer", "nextReviewDate") SELECT "userId", "deckId", "question", "answer", "nextReviewDate" FROM json_populate_recordset(NULL::flashcards, $1) RETURNING *`,
+    [JSON.stringify(flashcards)]
+  )
+  return rows;
+}

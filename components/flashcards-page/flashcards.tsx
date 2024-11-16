@@ -14,7 +14,19 @@ import Image from "next/image";
 import FlashcardReview from "./review-flashcards";
 import { BookOpen } from "lucide-react";
 import FlashcardsSkeleton from "./flashcards-skeleton";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/hooks/use-toast";
+import { createFlashcards } from "@/lib/actions";
+import Papa from "papaparse";
+import { z } from "zod";
+import { flashcardsSchema as completeFlashcardsSchema } from "@/lib/schema";
 
+export const flashcardSchema = z.object({
+  question: z.string().min(1, "Question is required"),
+  answer: z.string().min(1, "Answer is required"),
+});
+
+export const flashcardsSchema = z.array(flashcardSchema);
 export default function Flashcards({
   userId,
   deckId,
@@ -25,6 +37,7 @@ export default function Flashcards({
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [flippedCards, setFlippedCards] = useState<string[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -56,20 +69,85 @@ export default function Flashcards({
     setFlashcards((prev) => [...prev, { ...newCard }]);
   };
 
-  const handleFlashcardUpload = (files: File[]) => {
+  const handleFlashcardUpload = async (files: File[]) => {
     if (files.length === 0) return;
+    setIsLoading(true);
     const file = files[0];
     const reader = new FileReader();
+
     reader.onload = async (e) => {
       const content = e.target?.result as string;
-      const newFlashcards = JSON.parse(content) as Flashcard[];
-      setFlashcards((prev) => [...prev, ...newFlashcards]);
+      let newFlashcards: { question: string; answer: string }[] = [];
+
+      if (file.type === "application/json") {
+        try {
+          newFlashcards = flashcardsSchema.parse(JSON.parse(content));
+        } catch (error: any) {
+          toast({
+            title: "Invalid JSON format",
+            description: error.errors.map((err: any) => err.message).join(", "),
+          });
+          setIsLoading(false);
+          return;
+        }
+      } else if (file.type === "text/csv") {
+        const parsed = Papa.parse(content, { header: true });
+        console.log(parsed.data);
+        try {
+          newFlashcards = flashcardsSchema.parse(parsed.data);
+        } catch (error: any) {
+          toast({
+            title: "Invalid CSV format",
+            description: error.errors.map((err: any) => err.message).join(", "),
+          });
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        toast({
+          title: "Unsupported file format",
+          description: "Please upload a JSON or CSV file.",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Add deckId and other fields manually
+      let flashcardsWithDeckId = newFlashcards.map((flashcard) => ({
+        ...flashcard,
+        nextReviewDate: new Date().toISOString(),
+        userId,
+        deckId,
+      }));
+
+      flashcardsWithDeckId =
+        completeFlashcardsSchema.parse(flashcardsWithDeckId);
+
+      try {
+        const createdFlashcards = await createFlashcards(
+          deckId,
+          flashcardsWithDeckId as Flashcard[]
+        );
+        setFlashcards((prev) => [...prev, ...createdFlashcards]);
+        toast({
+          title: "Flashcards uploaded",
+          description: "Your flashcards have been uploaded successfully.",
+        });
+        setIsLoading(false);
+      } catch (error) {
+        toast({
+          title: "Upload failed",
+          description: "There was an error uploading your flashcards.",
+        });
+        setIsLoading(false);
+      }
     };
+
     reader.readAsText(file);
-  }
+  };
 
   return (
-    <div className="container mx-auto px-8 py-12">
+    <div className="container mx-auto px-8 py-14">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Flashcards</h1>
         <div className="flex flex-row gap-2">
@@ -91,10 +169,13 @@ export default function Flashcards({
               </Button>
             }
           />
-          <FlashcardsUploader onUpload={handleFlashcardUpload} />
+          <FlashcardsUploader
+            isUploading={isLoading}
+            onUpload={handleFlashcardUpload}
+          />
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-6">
         {flashcards.map((card) => (
           <motion.div
             key={card.id}
