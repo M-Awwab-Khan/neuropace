@@ -43,17 +43,17 @@ export default function EditFlashcard({
       question: flashcard.question,
       answer: flashcard.answer,
       deckId: flashcard.deckId,
+      userId: flashcard.userId,
+      nextReviewDate: new Date().toISOString(),
     },
-    mode: "onBlur",
   });
-
+  console.log(flashcard);
   const isLoading = formState.isSubmitting;
 
   const onSubmit = async (data: z.infer<typeof createFlashcardSchema>) => {
     const updatedFlashcard = await updateFlashcard(flashcard.id, data);
     onFlashcardUpdated(updatedFlashcard as Flashcard);
     setIsOpen(false);
-    reset();
   };
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>

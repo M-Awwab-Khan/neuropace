@@ -7,7 +7,9 @@ export default async function FlashcardsPage({
 }) {
   const deckId = (await params).id;
 
-  const { userId } = await auth();
+  const { userId, redirectToSignIn } = await auth();
+
+  if (!userId) return redirectToSignIn();
   return (
     <div>
       <Flashcards userId={userId} deckId={deckId} />

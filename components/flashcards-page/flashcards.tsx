@@ -14,7 +14,6 @@ import Image from "next/image";
 import FlashcardReview from "./review-flashcards";
 import { BookOpen } from "lucide-react";
 import FlashcardsSkeleton from "./flashcards-skeleton";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { createFlashcards } from "@/lib/actions";
 import Papa from "papaparse";
@@ -162,6 +161,7 @@ export default function Flashcards({
           />
           <CreateFlashcard
             deckId={deckId}
+            userId={userId}
             onFlashcardCreated={handleCreateCard}
             trigger={
               <Button className="flex items-center">

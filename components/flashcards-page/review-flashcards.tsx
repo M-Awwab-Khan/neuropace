@@ -30,8 +30,10 @@ interface FlashcardReviewProps {
 }
 
 const compare = (a: Flashcard, b: Flashcard) => {
-  return  new Date(a.nextReviewDate).getTime() < new Date(b.nextReviewDate).getTime();
-}
+  return (
+    new Date(a.nextReviewDate).getTime() < new Date(b.nextReviewDate).getTime()
+  );
+};
 
 export default function FlashcardReview({
   deckId,
@@ -52,9 +54,7 @@ export default function FlashcardReview({
         deckId
       )) as Flashcard[];
 
-      setPriorityQueue(
-        MinPriorityQueue.fromArray(fetchedFlashcards, compare)
-      );
+      setPriorityQueue(MinPriorityQueue.fromArray(fetchedFlashcards, compare));
 
       console.log(priorityQueue);
     };
@@ -63,7 +63,7 @@ export default function FlashcardReview({
   }, [deckId, latestFlashcards]);
 
   const handleDifficultySelection = async (difficulty: number) => {
-    console.log("I am clicked" );
+    console.log("I am clicked");
     if (!priorityQueue?.size()) return;
 
     const dequeuedCard = priorityQueue?.dequeue();
@@ -91,12 +91,11 @@ export default function FlashcardReview({
     setIsReviewCardFlipped(!isReviewCardFlipped);
   };
 
-
   //console.log(priorityQueue, "AA");
   console.log(priorityQueue?.size());
   console.log(priorityQueue?.size() === 0);
   const isReviewComplete = priorityQueue?.size() === 0;
-  
+
   const reviewProgress =
     originalFlashcardCount > 0
       ? ((originalFlashcardCount - priorityQueue?.size()) /
@@ -106,7 +105,14 @@ export default function FlashcardReview({
 
   return (
     <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger asChild>
+        <div className="relative inline-block">
+          {trigger}
+          <div className="absolute top-0 right-0 -mt-2 -mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-secondary-foreground text-xs">
+            {priorityQueue.size()}
+          </div>
+        </div>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Review Flashcards</DialogTitle>

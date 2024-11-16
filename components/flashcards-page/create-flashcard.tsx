@@ -22,11 +22,13 @@ import { z } from "zod";
 
 interface CreateFlashcardProps {
   deckId: string;
+  userId: string;
   onFlashcardCreated: (flashcard: Flashcard) => void;
   trigger: React.ReactNode;
 }
 export default function CreateFlashcard({
   deckId,
+  userId,
   onFlashcardCreated,
   trigger,
 }: CreateFlashcardProps) {
@@ -42,10 +44,14 @@ export default function CreateFlashcard({
     defaultValues: {
       question: "",
       answer: "",
+      deckId,
+      userId,
+      nextReviewDate: new Date().toISOString(),
     },
   });
   const [open, setIsOpen] = useState(false);
   const isLoading = formState.isSubmitting;
+  console.log(errors);
   const onSubmit = async (data: z.infer<typeof createFlashcardSchema>) => {
     const createdFlashcard = (await createFlashcard(deckId, data)) as Flashcard;
     onFlashcardCreated(createdFlashcard);
