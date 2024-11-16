@@ -9,6 +9,7 @@ import EditFlashcard from "./edit-flashcard";
 import { Flashcard } from "@/lib/types";
 import DeleteFlashcard from "./delete-flashcard";
 import NoFlashcardsIllustration from "@/public/noFlashcards.svg";
+import { FlashcardsUploader } from "./upload-flashcards";
 import Image from "next/image";
 import FlashcardReview from "./review-flashcards";
 import { BookOpen } from "lucide-react";
@@ -55,6 +56,18 @@ export default function Flashcards({
     setFlashcards((prev) => [...prev, { ...newCard }]);
   };
 
+  const handleFlashcardUpload = (files: File[]) => {
+    if (files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const content = e.target?.result as string;
+      const newFlashcards = JSON.parse(content) as Flashcard[];
+      setFlashcards((prev) => [...prev, ...newFlashcards]);
+    };
+    reader.readAsText(file);
+  }
+
   return (
     <div className="container mx-auto px-8 py-12">
       <div className="flex justify-between items-center mb-6">
@@ -78,6 +91,7 @@ export default function Flashcards({
               </Button>
             }
           />
+          <FlashcardsUploader onUpload={handleFlashcardUpload} />
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
