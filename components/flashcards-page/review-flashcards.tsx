@@ -20,12 +20,17 @@ import {
   updateReviewFlashcard,
   superMemo2,
 } from "@/lib/actions";
-import { MinPriorityQueue } from "datastructures-js";
+// import { MinPriorityQueue } from "datastructures-js";
+import MinPriorityQueue from "@/lib/DataStructures/MinPriorityQueue";
 
 interface FlashcardReviewProps {
   deckId: string;
   trigger: React.ReactNode;
   latestFlashcards: Flashcard[];
+}
+
+const compare = (a: Flashcard, b: Flashcard) => {
+  return  new Date(a.nextReviewDate).getTime() < new Date(b.nextReviewDate).getTime();
 }
 
 export default function FlashcardReview({
@@ -38,7 +43,7 @@ export default function FlashcardReview({
   const [currentCard, setCurrentCard] = useState<Flashcard | null>(null);
   const [priorityQueue, setPriorityQueue] = useState<
     MinPriorityQueue<Flashcard>
-  >(new MinPriorityQueue());
+  >(new MinPriorityQueue(compare));
   const originalFlashcardCount = latestFlashcards.length;
 
   useEffect(() => {
@@ -48,9 +53,7 @@ export default function FlashcardReview({
       )) as Flashcard[];
 
       setPriorityQueue(
-        MinPriorityQueue.fromArray(fetchedFlashcards, (a) =>
-          new Date(a.nextReviewDate).getTime()
-        )
+        MinPriorityQueue.fromArray(fetchedFlashcards, compare)
       );
 
       console.log(priorityQueue);
@@ -60,6 +63,7 @@ export default function FlashcardReview({
   }, [deckId, latestFlashcards]);
 
   const handleDifficultySelection = async (difficulty: number) => {
+    console.log("I am clicked" );
     if (!priorityQueue?.size()) return;
 
     const dequeuedCard = priorityQueue?.dequeue();
@@ -87,7 +91,12 @@ export default function FlashcardReview({
     setIsReviewCardFlipped(!isReviewCardFlipped);
   };
 
+
+  //console.log(priorityQueue, "AA");
+  console.log(priorityQueue?.size());
+  console.log(priorityQueue?.size() === 0);
   const isReviewComplete = priorityQueue?.size() === 0;
+  
   const reviewProgress =
     originalFlashcardCount > 0
       ? ((originalFlashcardCount - priorityQueue?.size()) /
