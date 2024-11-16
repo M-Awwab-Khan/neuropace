@@ -4,7 +4,7 @@ import DynamicArray from "./DynamicArray";
 import { errorToJSON } from "next/dist/server/render";
 
 
-export default class PriorityQueue<T> {
+export default class MinPriorityQueue<T> {
     private data: DynamicArray<T>;
     private compare: (a: T, b: T) => boolean;
 
@@ -13,13 +13,28 @@ export default class PriorityQueue<T> {
         this.compare = c;
     }
 
-    fromArray(cards: T[]): void {
-        for(const card of cards) {
-            this.data.append(card);
-        }
+    // static fromArray(cards: T[]): MinPriorityQueue<T> {
+    //     for(const card of cards) {
+    //         this.data.append(card);
+    //     }
 
-        this.heapifyBuild();
+    //     this.heapifyBuild();
+    //     return this;
+    // }
+
+
+    static fromArray<T>(cards: T[], compare: (a: T, b: T) => boolean): MinPriorityQueue<T> {
+        const queue = new MinPriorityQueue<T>(compare);  // Create a new instance of MinPriorityQueue
+    
+        for (const card of cards) {
+            queue.data.append(card);  // Add each card to the queue's data
+        }
+    
+        queue.heapifyBuild();  // Build the heap structure
+    
+        return queue;  // Return the new instance of MinPriorityQueue
     }
+    
 
     
 
@@ -87,8 +102,10 @@ export default class PriorityQueue<T> {
         return this.data.size;
     }
 
-    front(): T {
-        // Does not handle exception
+    front(): T | null {
+        if(this.isEmpty()) {
+            return null;
+        }
         return this.data.getElement(0);
     }
 
@@ -98,7 +115,7 @@ export default class PriorityQueue<T> {
     }
 
     dequeue(): T {
-        let temp: T = this.data.pop();
+        let temp: T = this.data.pop(0);
 
         return temp;
     }

@@ -1,5 +1,3 @@
-import { INSTRUMENTATION_HOOK_FILENAME } from "next/dist/lib/constants";
-import { Flashcard } from "../types";
 
 export default class DynamicArray<T> {
     
@@ -73,6 +71,13 @@ export default class DynamicArray<T> {
         }
 
         let temp: T = this.data[i];
+
+        // if(this.size == 1) {
+        //     this.data = [];
+        //     this.size = 0;
+        //     return temp;
+        // }
+
 
         for(let j = i; j < this.size - 1; j++) {
             this.data[j] = this.data[j+1];
