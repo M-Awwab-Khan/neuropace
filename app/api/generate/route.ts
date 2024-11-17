@@ -3,7 +3,7 @@ import {google} from "@ai-sdk/google"
 import { NextResponse } from "next/server";
 import pdfParse from "pdf-parse"
 
-const model = google('gemini-1.5-pro-latest', {
+const model = google('gemini-1.5-flash-latest', {
   safetySettings: [
     {
       category: 'HARM_CATEGORY_HATE_SPEECH',
