@@ -15,7 +15,6 @@ import { useState } from "react";
 import { createFlashcard } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Flashcard } from "@/lib/types";
-import { Plus } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFlashcardSchema } from "@/lib/schema";
 import { z } from "zod";

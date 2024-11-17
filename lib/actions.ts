@@ -142,3 +142,19 @@ export async function createFlashcards(deckId: string, flashcards: Flashcard[]) 
   )
   return rows;
 }
+
+export async function allDecksReviewProgress() {
+    const { rows } = await sql`
+        SELECT
+            "deckId",
+            CASE
+                WHEN COUNT(*) = 0 THEN 100
+                ELSE ROUND(
+                    (COUNT(*) - COUNT(*) FILTER (WHERE "nextReviewDate" <= NOW())) * 100.0 / COUNT(*)
+                )::numeric
+            END AS "progress"
+        FROM flashcards
+        GROUP BY "deckId"
+    `;
+    return rows;
+}

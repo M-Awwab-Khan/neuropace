@@ -17,6 +17,7 @@ interface DeckCardProps {
   userId: string;
   name: string;
   category: string;
+  progress: number;
   onDeckUpdated: (deck: any) => void;
   onDeckDeleted: (deckId: string) => void;
 }
@@ -26,6 +27,7 @@ export function DeckCard({
   userId,
   name,
   category,
+  progress,
   onDeckUpdated,
   onDeckDeleted,
 }: DeckCardProps) {
@@ -62,7 +64,7 @@ export function DeckCard({
           deck={{ id, userId, name, category }}
         />
       </CardFooter>
-      <Progress value={30} />
+      <Progress value={progress} />
     </Card>
   );
 }

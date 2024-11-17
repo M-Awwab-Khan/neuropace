@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { createDeck } from "@/lib/actions";
 import NoDecksIllustration from "@/public/noDecks.svg";
+import { allDecksReviewProgress } from "@/lib/actions";
 
 export default function Decks({ userId }: { userId: string }) {
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -28,6 +29,9 @@ export default function Decks({ userId }: { userId: string }) {
   const { toast } = useToast();
   const [deletedDeck, setDeletedDeck] = useState<Deck | null>(null);
   const [filteredDecks, setFilteredDecks] = useState<Deck[]>(decks);
+  const [decksProgress, setDecksProgress] = useState<
+    { deckId: string; progress: number }[]
+  >([]);
 
   const handleSortChange = (value: string) => {
     setFilteredDecks((prevDecks) => {
@@ -46,6 +50,12 @@ export default function Decks({ userId }: { userId: string }) {
   useEffect(() => {
     const fetchDecks = async () => {
       const decks = (await getDecks()) as Deck[];
+      setDecksProgress(
+        (await allDecksReviewProgress()) as {
+          deckId: string;
+          progress: number;
+        }[]
+      );
       setDecks(decks);
       setFilteredDecks(decks);
       setLoading(false);
@@ -53,6 +63,7 @@ export default function Decks({ userId }: { userId: string }) {
     fetchDecks();
   }, []);
 
+  console.log(decksProgress);
   useEffect(() => {
     setFilteredDecks(decks);
   }, [decks]);
@@ -151,6 +162,10 @@ export default function Decks({ userId }: { userId: string }) {
               userId={userId}
               onDeckDeleted={onDeckDeleted}
               onDeckUpdated={onDeckUpdated}
+              progress={
+                decksProgress.find((deck) => deck.deckId === id)
+                  ?.progress as number
+              }
               id={id}
             />
           ))}
