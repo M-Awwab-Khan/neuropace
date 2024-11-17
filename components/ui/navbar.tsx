@@ -127,6 +127,7 @@ export const DesktopNavigation = (
         <div className="flex justify-items-center justify-center items-center">
           <NavItem href="/">Home</NavItem>
           <NavItem href="/my-decks">My Decks</NavItem>
+          <NavItem href="/quiz">Quiz</NavItem>
           <SignedOut>
             <NavItem href="#">
               <SignInButton mode="modal" />
