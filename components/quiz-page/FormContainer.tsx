@@ -35,7 +35,7 @@ export default function FormContainer({ decks }: { decks: Deck[] }) {
     }
   }, [status, setQuizzes, reset, setStatus, streamContent]);
 
-  async function generateQuiz(data) {
+  async function generateQuiz(data: any) {
     setStatus("streaming");
     setStreamContent("");
 

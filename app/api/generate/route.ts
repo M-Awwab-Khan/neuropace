@@ -23,22 +23,7 @@ const model = google('gemini-1.5-pro-latest', {
     },
   ],
 });
-function iteratorToStream(iterator: any) {
-  return new ReadableStream({
-    async pull(controller) {
-      const { value, done } = await iterator.next();
 
-      if (done || !value) {
-        controller.close();
-      } else {
-        const data = value.candidates[0].content.parts[0].text;
-
-        // controller.enqueue(`data: ${data}\n\n`);
-        controller.enqueue(data);
-      }
-    },
-  });
-}
 
 const flashcardsPrompt = (flashcards: any[], difficulty: string, totalQuizQuestions: string) => {
     return `
