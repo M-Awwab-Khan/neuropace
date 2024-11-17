@@ -41,7 +41,7 @@ export function DeckCard({
           <CardDescription>{category}</CardDescription>
         </CardHeader>
       </Link>
-      <div className="flex flex-row gap-2 pl-6 text-sm text-muted-foreground">
+      <div className="flex flex-row gap-2 pl-6 text-sm">
         <CalendarClock className="h-5 w-5" />
         {lastReviewDate
           ? new Date(lastReviewDate).toLocaleDateString()

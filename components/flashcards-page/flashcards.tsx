@@ -224,17 +224,17 @@ export default function Flashcards({
 					/>
 				</div>
 			</div>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-6">
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-6 ">
 				{filteredFlashcards.map((card) => (
 					<motion.div
 						key={card.id}
-						className="relative h-64 cursor-pointer"
+						className="relative h-64 cursor-pointer "
 						onClick={() => handleFlip(card.id as string)}
 						whileHover={{ scale: 1.05 }}
 						transition={{ type: "spring", stiffness: 300, damping: 20 }}
 					>
 						<motion.div
-							className="absolute inset-0 w-full h-full [transform-style:preserve-3d]"
+							className="absolute inset-0 w-full h-full [transform-style:preserve-3d] "
 							initial={false}
 							animate={{
 								rotateY: flippedCards.includes(card.id as string) ? 180 : 0,
@@ -246,8 +246,8 @@ export default function Flashcards({
 								damping: 20,
 							}}
 						>
-							<div className="absolute inset-0 w-full h-full bg-card rounded-lg shadow-lg p-6 [backface-visibility:hidden]">
-								<h3 className="text-lg font-medium mb-4 text-card-foreground">
+							<div className="absolute inset-0 w-full h-full bg-card rounded-lg shadow-lg p-6 [backface-visibility:hidden] bg-gradient-to-r from-violet-100 to-blue-100 hover:from-violet-400 hover:to-blue-400 hover:text-white">
+								<h3 className="text-lg font-medium mb-4">
 									{card.question}
 								</h3>
 								<div className="absolute bottom-4 right-4 flex space-x-2">
