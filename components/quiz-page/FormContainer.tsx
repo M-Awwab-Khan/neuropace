@@ -28,6 +28,7 @@ export default function FormContainer({ decks }: { decks: Deck[] }) {
         setQuizzes(data);
       } catch (error) {
         alert(`Error generating quizzes, try again!`);
+        console.log(error);
         reset();
         setStreamContent("");
         setStatus("idle");
