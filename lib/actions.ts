@@ -191,7 +191,7 @@ export async function allDecksReviewProgress() {
 	return rows;
 }
 
-export async function getFlashcardsbyDeck(deckIds: string[]) {
+export async function getFlashcardsbyDeck(deckIds: any) {
     const { rows } = await sql`
         SELECT * FROM flashcards WHERE "deckId" = ANY(${deckIds})
     `;
