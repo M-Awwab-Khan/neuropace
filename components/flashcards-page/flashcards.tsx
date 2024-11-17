@@ -187,7 +187,7 @@ export default function Flashcards({
 		// 	)
 		// );
 
-		setFilteredFlashcards(linearSearch<Flashcard, String>(flashcards, flashcards.length, searchValue, compare));
+		setFilteredFlashcards(linearSearch<Flashcard, String>(filteredFlashcards, filteredFlashcards.length, searchValue, compare));
 
 	};
 
