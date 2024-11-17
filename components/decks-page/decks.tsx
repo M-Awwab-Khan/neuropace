@@ -10,6 +10,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
 import { Input } from "@/components/ui/input";
+import { linearSearch } from "@/lib/Algorithms/LinearSearch";
 import Image from "next/image";
 import {
   Select,
@@ -128,16 +129,41 @@ export default function Decks({ userId }: { userId: string }) {
     });
   };
 
+  // Compare function for linear search
+  const compare = (a: Deck, t: String) => {
+    let temp: string = a.name.toLowerCase();
+		t = t.toLowerCase();
+
+		for (let i: number = 0; temp.length - i + 1 >= t.length; i++) {
+			let found: boolean = true;
+			for (let j: number = 0; j < t.length; j++) {
+				if (t[j] != temp[i + j]) {
+					found = false;
+					break;
+				}
+			}
+			if(found) {return true;}
+
+		}
+
+		return false;
+  }
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.target.value;
     if (searchValue === "") {
       return setFilteredDecks(decks);
     }
-    setFilteredDecks(
-      decks.filter((deck) =>
-        deck.name.toLowerCase().includes(searchValue.toLowerCase())
-      )
-    );
+
+    setFilteredDecks(linearSearch<Deck, String>(decks, decks.length, searchValue, compare));
+
+    // setFilteredDecks(
+    //   decks.filter((deck) =>
+    //     deck.name.toLowerCase().includes(searchValue.toLowerCase())
+    //   )
+    // );
+
+
   };
 
   return (
