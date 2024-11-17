@@ -23,6 +23,14 @@ export async function createDeck({ userId, name, category }: z.infer<typeof crea
 	return rows[0];
 }
 
+export async function getDeckLastReviewDate(deckId: string) {
+    const { rows } = await sql`
+    SELECT MAX("lastReviewDate") FROM flashcards
+    WHERE "deckId" = ${deckId}
+  `;
+    return rows[0].max;
+}
+
 export async function updateDeck(id: string, { name, category }: z.infer<typeof createDeckSchema>) {
 	const { rows } = await sql`
     UPDATE decks

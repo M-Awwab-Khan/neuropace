@@ -24,6 +24,7 @@ import { createDeck } from "@/lib/actions";
 import NoDecksIllustration from "@/public/noDecks.svg";
 import { allDecksReviewProgress } from "@/lib/actions";
 import { bubbleSort } from "@/lib/Algorithms/BubbleSort";
+import { getDeckLastReviewDate } from "@/lib/actions";
 
 export default function Decks({ userId }: { userId: string }) {
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -38,24 +39,21 @@ export default function Decks({ userId }: { userId: string }) {
   // Compare functions for bubbleSort
   const A_Z = (a: Deck, b: Deck) => {
     return b.name.toUpperCase() < a.name.toUpperCase();
-  }
+  };
 
   const Z_A = (a: Deck, b: Deck) => {
     return a.name.toUpperCase() < b.name.toUpperCase();
-  }
+  };
 
   const handleSortChange = (value: string) => {
     setFilteredDecks((prevDecks) => {
       const sortedDecks = [...prevDecks];
 
-      
-      if(value == "A-Z") {
+      if (value == "A-Z") {
         bubbleSort<Deck>(sortedDecks, sortedDecks.length, A_Z);
-      }
-      else {
+      } else {
         bubbleSort<Deck>(sortedDecks, sortedDecks.length, Z_A);
       }
-      
 
       // sortedDecks.sort((a, b) => {
       //   if (value === "A-Z") {
@@ -64,7 +62,6 @@ export default function Decks({ userId }: { userId: string }) {
       //     return b.name.localeCompare(a.name);
       //   }
       // });
-
 
       return sortedDecks;
     });
@@ -79,8 +76,17 @@ export default function Decks({ userId }: { userId: string }) {
           progress: number;
         }[]
       );
-      setDecks(decks);
-      setFilteredDecks(decks);
+
+      const decksWithDate = await Promise.all(
+        decks.map(async (deck) => ({
+          ...deck,
+          lastReviewDate: await getDeckLastReviewDate(deck.id),
+        }))
+      );
+
+      setDecks(decksWithDate);
+      console.log("hello", decksWithDate);
+      setFilteredDecks(decksWithDate);
       setLoading(false);
     };
     fetchDecks();
@@ -132,22 +138,23 @@ export default function Decks({ userId }: { userId: string }) {
   // Compare function for linear search
   const compare = (a: Deck, t: String) => {
     let temp: string = a.name.toLowerCase();
-		t = t.toLowerCase();
+    t = t.toLowerCase();
 
-		for (let i: number = 0; temp.length - i + 1 >= t.length; i++) {
-			let found: boolean = true;
-			for (let j: number = 0; j < t.length; j++) {
-				if (t[j] != temp[i + j]) {
-					found = false;
-					break;
-				}
-			}
-			if(found) {return true;}
+    for (let i: number = 0; temp.length - i + 1 >= t.length; i++) {
+      let found: boolean = true;
+      for (let j: number = 0; j < t.length; j++) {
+        if (t[j] != temp[i + j]) {
+          found = false;
+          break;
+        }
+      }
+      if (found) {
+        return true;
+      }
+    }
 
-		}
-
-		return false;
-  }
+    return false;
+  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.target.value;
@@ -155,15 +162,20 @@ export default function Decks({ userId }: { userId: string }) {
       return setFilteredDecks(decks);
     }
 
-    setFilteredDecks(linearSearch<Deck, String>(filteredDecks, filteredDecks.length, searchValue, compare));
+    setFilteredDecks(
+      linearSearch<Deck, String>(
+        filteredDecks,
+        filteredDecks.length,
+        searchValue,
+        compare
+      )
+    );
 
     // setFilteredDecks(
     //   decks.filter((deck) =>
     //     deck.name.toLowerCase().includes(searchValue.toLowerCase())
     //   )
     // );
-
-
   };
 
   return (
@@ -202,12 +214,13 @@ export default function Decks({ userId }: { userId: string }) {
         </div>
       ) : (
         <div className="mt-10 flex flex-wrap gap-5 mb-10">
-          {filteredDecks.map(({ id, name, category }) => (
+          {filteredDecks.map(({ id, name, lastReviewDate, category }) => (
             <DeckCard
               key={id}
               name={name}
               category={category}
               userId={userId}
+              lastReviewDate={lastReviewDate}
               onDeckDeleted={onDeckDeleted}
               onDeckUpdated={onDeckUpdated}
               progress={

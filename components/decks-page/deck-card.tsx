@@ -18,6 +18,7 @@ interface DeckCardProps {
   name: string;
   category: string;
   progress: number;
+  lastReviewDate: string;
   onDeckUpdated: (deck: any) => void;
   onDeckDeleted: (deckId: string) => void;
 }
@@ -28,6 +29,7 @@ export function DeckCard({
   name,
   category,
   progress,
+  lastReviewDate,
   onDeckUpdated,
   onDeckDeleted,
 }: DeckCardProps) {
@@ -41,7 +43,9 @@ export function DeckCard({
       </Link>
       <div className="flex flex-row gap-2 pl-6 text-sm text-muted-foreground">
         <CalendarClock className="h-5 w-5" />
-        12/12/2021
+        {lastReviewDate
+          ? new Date(lastReviewDate).toLocaleDateString()
+          : "Never"}
       </div>
       <CardFooter className="flex flex-col items-end">
         <EditDeck
