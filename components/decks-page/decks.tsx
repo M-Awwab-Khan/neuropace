@@ -153,7 +153,7 @@ export default function Decks({ userId }: { userId: string }) {
           ))}
         </div>
       ) : (
-        <div className="mt-10 flex flex-wrap gap-5">
+        <div className="mt-10 flex flex-wrap gap-5 mb-10">
           {filteredDecks.map(({ id, name, category }) => (
             <DeckCard
               key={id}
