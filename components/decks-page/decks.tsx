@@ -155,7 +155,7 @@ export default function Decks({ userId }: { userId: string }) {
       return setFilteredDecks(decks);
     }
 
-    setFilteredDecks(linearSearch<Deck, String>(decks, decks.length, searchValue, compare));
+    setFilteredDecks(linearSearch<Deck, String>(filteredDecks, filteredDecks.length, searchValue, compare));
 
     // setFilteredDecks(
     //   decks.filter((deck) =>
