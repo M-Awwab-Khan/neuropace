@@ -22,6 +22,7 @@ import {
 import { createDeck } from "@/lib/actions";
 import NoDecksIllustration from "@/public/noDecks.svg";
 import { allDecksReviewProgress } from "@/lib/actions";
+import { bubbleSort } from "@/lib/Algorithms/BubbleSort";
 
 export default function Decks({ userId }: { userId: string }) {
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -33,16 +34,37 @@ export default function Decks({ userId }: { userId: string }) {
     { deckId: string; progress: number }[]
   >([]);
 
+  // Compare functions for bubbleSort
+  const A_Z = (a: Deck, b: Deck) => {
+    return b.name.toUpperCase() < a.name.toUpperCase();
+  }
+
+  const Z_A = (a: Deck, b: Deck) => {
+    return a.name.toUpperCase() < b.name.toUpperCase();
+  }
+
   const handleSortChange = (value: string) => {
     setFilteredDecks((prevDecks) => {
       const sortedDecks = [...prevDecks];
-      sortedDecks.sort((a, b) => {
-        if (value === "A-Z") {
-          return a.name.localeCompare(b.name);
-        } else {
-          return b.name.localeCompare(a.name);
-        }
-      });
+
+      
+      if(value == "A-Z") {
+        bubbleSort<Deck>(sortedDecks, sortedDecks.length, A_Z);
+      }
+      else {
+        bubbleSort<Deck>(sortedDecks, sortedDecks.length, Z_A);
+      }
+      
+
+      // sortedDecks.sort((a, b) => {
+      //   if (value === "A-Z") {
+      //     return a.name.localeCompare(b.name);
+      //   } else {
+      //     return b.name.localeCompare(a.name);
+      //   }
+      // });
+
+
       return sortedDecks;
     });
   };
