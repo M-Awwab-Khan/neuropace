@@ -15,13 +15,13 @@ export default function Navbar() {
 
   return (
     <nav className="top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md shadow-lg">
-      <div className="w-full px-8 sm:px-10 lg:px-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/">
               <div className="flex items-center">
                 <Brain className="h-8 w-8 text-primary" />
-                <span className="ml-2 text-3xl font-bold text-primary">
+                <span className="ml-2 text-xl font-bold text-primary">
                   NeuroPace
                 </span>
               </div>
