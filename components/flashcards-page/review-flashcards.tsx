@@ -53,16 +53,14 @@ export default function FlashcardReview({
         deckId
       )) as Flashcard[];
 
-      setPriorityQueue(MinPriorityQueue.fromArray(fetchedFlashcards, compare));
-
-      console.log(priorityQueue);
+      const newQueue = MinPriorityQueue.fromArray(fetchedFlashcards, compare);
+      setPriorityQueue(newQueue);
+      setCurrentCard(newQueue.front());
     };
     fetchFlashcards();
-    setCurrentCard(priorityQueue?.front());
   }, [deckId, latestFlashcards]);
 
   const handleDifficultySelection = async (difficulty: number) => {
-    console.log("I am clicked");
     if (!priorityQueue?.size()) return;
 
     const dequeuedCard = priorityQueue?.dequeue();
@@ -90,9 +88,6 @@ export default function FlashcardReview({
     setIsReviewCardFlipped(!isReviewCardFlipped);
   };
 
-  //console.log(priorityQueue, "AA");
-  console.log(priorityQueue?.size());
-  console.log(priorityQueue?.size() === 0);
   const isReviewComplete = priorityQueue?.size() === 0;
 
   const reviewProgress =
@@ -119,7 +114,7 @@ export default function FlashcardReview({
             Review your flashcards and rate their difficulty.
           </DialogDescription>
         </DialogHeader>
-        {isReviewComplete ? (
+        {isReviewComplete || !currentCard ? (
           <div className="flex flex-col items-center justify-center m-3">
             <div className="flex flex-row m-3">
               <CircleCheckBig size={28} className="text-primary mr-2" />

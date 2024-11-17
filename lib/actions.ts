@@ -69,6 +69,17 @@ export async function updateFlashcard(id: string, { question, answer }: { questi
   return rows[0];
 }
 
+export async function updateCompleteFlashcard(flashcard: Flashcard) {
+  const { rows } = await sql`
+    UPDATE flashcards
+    SET question = ${flashcard.question}, answer = ${flashcard.answer}, "lastReviewDate" = ${flashcard.lastReviewDate}, "interval" = ${flashcard.interval}, "repetitions" = ${flashcard.repetitions}, "easeFactor" = ${flashcard.easeFactor}, "nextReviewDate" = ${flashcard.nextReviewDate}
+    WHERE id = ${flashcard.id}
+    RETURNING *
+  `;
+  return rows[0];
+
+}
+
 export async function deleteFlashcard(id: string) {
       await sql`
     DELETE FROM flashcards
