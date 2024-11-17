@@ -12,7 +12,7 @@
     --popover-foreground: 334 55% 1%;
     --card: 334 62% 100%;
     --card-foreground: 334 55% 1%;
-    --border: 334 0% 86.15%;
+    --border: 356 2.93% 9.71%;
     --input: 334 0% 88.46%;
     --primary: 242.93 100% 67.84%;
     --primary-foreground: 0 0% 100%;
@@ -24,6 +24,7 @@
     --destructive-foreground: 18 0% 100%;
     --ring: 228.33 94.74% 62.75%;
     --radius: 0.5rem;
+    --outline-color: 0 0% 0%; /* Black color for outline */
   }
 
   .dark {
@@ -46,8 +47,10 @@
     --destructive: 358.82 84.44% 64.71%;
     --destructive-foreground: 0 0% 100%;
     --ring: 227.56 53.78% 49.22%;
+    --outline-color: 0 0% 0%; /* Black color for outline in dark mode */
   }
 }
+
 
 @layer base {
   * {

@@ -51,13 +51,13 @@ export default function HeroSection() {
                 <div className="relative space-y-4">
                   {[
                     {
-                      question: "What is the capital of Czech Republic?",
-                      answer: "Prague",
+                      question: "who stares the most",
+                      answer: "Awwab",
                     },
-                    { question: "What is 7 x 8?", answer: "56" },
+                    { question: "Who is figma helper", answer: "Talha bhai" },
                     {
-                      question: "Who wrote 'Tauba Tauba Song'?",
-                      answer: "Enayat UR Rehman",
+                      question: "Who shares the most reels",
+                      answer: "That one person Rayyan",
                     },
                   ].map((card, index) => (
                     <div
