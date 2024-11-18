@@ -24,11 +24,23 @@ export default function FormContainer({ decks }: { decks: Deck[] }) {
   useEffect(() => {
     if (status === "done") {
       try {
-        const data = JSON.parse(streamContent);
-        setQuizzes(data);
+        const jsonContent = streamContent.match(/\[[\s\S]*?\]/);
+        if (jsonContent) {
+          const data = JSON.parse(jsonContent[0]);
+          setQuizzes(data);
+          setStatus("done");
+          console.log(data);
+        } else {
+          alert(`Error generating quizzes, try again!. no json content found`);
+          console.log(streamContent);
+          reset();
+          setStreamContent("");
+          setStatus("idle");
+        }
       } catch (error) {
         alert(`Error generating quizzes, try again!`);
         console.log(error);
+        console.log(streamContent);
         reset();
         setStreamContent("");
         setStatus("idle");
@@ -84,11 +96,8 @@ export default function FormContainer({ decks }: { decks: Deck[] }) {
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
-            setStreamContent((prev) =>
-              prev.replace("```json", "").replace("```", "")
-            );
             setStatus("done");
-            return;
+            break;
           }
           setStreamContent((prev) => prev + value);
         }

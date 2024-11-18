@@ -1,29 +1,31 @@
 import { streamText } from "ai";
 import {google} from "@ai-sdk/google"
+import { groq } from "@ai-sdk/groq"
 import { NextResponse } from "next/server";
 import pdfParse from "pdf-parse"
 
-const model = google('gemini-1.5-flash-latest', {
-  safetySettings: [
-    {
-      category: 'HARM_CATEGORY_HATE_SPEECH',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE',
-    },
-    {
-      category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE',
-    },
-    {
-      category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE',
-    },
-    {
-      category: 'HARM_CATEGORY_HARASSMENT',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE',
-    },
-  ],
-});
+// const model = google('gemini-1.5-flash-latest', {
+//   safetySettings: [
+//     {
+//       category: 'HARM_CATEGORY_HATE_SPEECH',
+//       threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+//     },
+//     {
+//       category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+//       threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+//     },
+//     {
+//       category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+//       threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+//     },
+//     {
+//       category: 'HARM_CATEGORY_HARASSMENT',
+//       threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+//     },
+//   ],
+// });
 
+const model = groq("llama-3.2-11b-text-preview")
 
 const flashcardsPrompt = (flashcards: any[], difficulty: string, totalQuizQuestions: string) => {
     return `
@@ -32,9 +34,9 @@ const flashcardsPrompt = (flashcards: any[], difficulty: string, totalQuizQuesti
     }.
     Generate quiz questions based on these flashcards:
 ${flashcards.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n')}
-    You response should be in JSON as an array of the object below. Respond with ${
+    You response should only be a JSON array of the object below. Respond only with ${
       totalQuizQuestions || 5
-    } different questions.
+    } different questions in JSON format.
   {
    \"id\": 1,
    \"question\": \"\",
