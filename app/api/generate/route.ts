@@ -59,9 +59,9 @@ const fileContentPrompt = (topic: string, content: string, difficulty: string, t
     The topic is ${topic || "General Knowledge"}.
     Generate quiz questions based on these files:
 ${content}
-    You response should be in JSON as an array of the object below. Respond with ${
+    You response should only be a JSON array of the object below. Respond only with ${
       totalQuizQuestions || 5
-    } different questions.
+    } different questions in JSON format.
   {
    \"id\": 1,
    \"question\": \"\",
