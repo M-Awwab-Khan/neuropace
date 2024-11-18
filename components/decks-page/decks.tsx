@@ -25,6 +25,7 @@ import NoDecksIllustration from "@/public/noDecks.svg";
 import { allDecksReviewProgress } from "@/lib/actions";
 import { bubbleSort } from "@/lib/Algorithms/BubbleSort";
 import { getDeckLastReviewDate } from "@/lib/actions";
+import { getAllDecksDetails } from "@/lib/actions";
 
 export default function Decks({ userId }: { userId: string }) {
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -55,38 +56,14 @@ export default function Decks({ userId }: { userId: string }) {
         bubbleSort<Deck>(sortedDecks, sortedDecks.length, Z_A);
       }
 
-      // sortedDecks.sort((a, b) => {
-      //   if (value === "A-Z") {
-      //     return a.name.localeCompare(b.name);
-      //   } else {
-      //     return b.name.localeCompare(a.name);
-      //   }
-      // });
-
       return sortedDecks;
     });
   };
 
   useEffect(() => {
     const fetchDecks = async () => {
-      const decks = (await getDecks()) as Deck[];
-      setDecksProgress(
-        (await allDecksReviewProgress()) as {
-          deckId: string;
-          progress: number;
-        }[]
-      );
-
-      const decksWithDate = await Promise.all(
-        decks.map(async (deck) => ({
-          ...deck,
-          lastReviewDate: await getDeckLastReviewDate(deck.id),
-        }))
-      );
-
-      setDecks(decksWithDate);
-      console.log("hello", decksWithDate);
-      setFilteredDecks(decksWithDate);
+      const decks = (await getAllDecksDetails()) as Deck[];
+      setDecks(decks);
       setLoading(false);
     };
     fetchDecks();
@@ -214,22 +191,21 @@ export default function Decks({ userId }: { userId: string }) {
         </div>
       ) : (
         <div className="mt-10 flex flex-wrap gap-5 mb-10">
-          {filteredDecks.map(({ id, name, lastReviewDate, category }: any) => (
-            <DeckCard
-              key={id}
-              name={name}
-              category={category}
-              userId={userId}
-              lastReviewDate={lastReviewDate}
-              onDeckDeleted={onDeckDeleted}
-              onDeckUpdated={onDeckUpdated}
-              progress={
-                decksProgress.find((deck) => deck.deckId === id)
-                  ?.progress as number
-              }
-              id={id}
-            />
-          ))}
+          {filteredDecks.map(
+            ({ id, name, last_review_date, category, progress }: any) => (
+              <DeckCard
+                key={id}
+                name={name}
+                category={category}
+                userId={userId}
+                lastReviewDate={last_review_date}
+                onDeckDeleted={onDeckDeleted}
+                onDeckUpdated={onDeckUpdated}
+                progress={progress}
+                id={id}
+              />
+            )
+          )}
         </div>
       )}
       {decks.length === 0 && !loading && (

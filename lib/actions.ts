@@ -95,6 +95,34 @@ export async function deleteFlashcard(id: string) {
     WHERE id=${id}`;
 }
 
+export async function getAllDecksDetails() {
+    const { userId } = await auth();
+    const { rows } = await sql`
+        SELECT
+            d.*,
+            COALESCE(rp.progress, 100) as progress,
+            lr.last_review_date
+        FROM decks d
+        LEFT JOIN (
+            SELECT
+                "deckId",
+                ROUND(
+                    (COUNT(*) - COUNT(*) FILTER (WHERE "nextReviewDate" <= NOW())) * 100.0 / NULLIF(COUNT(*), 0)
+                )::numeric AS progress
+            FROM flashcards
+            GROUP BY "deckId"
+        ) rp ON d.id = rp."deckId"
+        LEFT JOIN (
+            SELECT
+                "deckId",
+                MAX("lastReviewDate") as last_review_date
+            FROM flashcards
+            GROUP BY "deckId"
+        ) lr ON d.id = lr."deckId"
+        WHERE d.user_id = ${userId}`
+    ;
+    return rows;
+}
 
 export async function getReviewFlashcards(deckId: string) {
 	const { rows } = await sql`
