@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { DesktopNavigation } from "@/components/ui/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "sonner";
+import { Analytics } from "@vercel/analytics";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -31,6 +32,7 @@ export default function RootLayout({
           {children}
           <Toaster />
           <SonnerToaster />
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
