@@ -3,9 +3,8 @@ import { sql } from "@vercel/postgres"
 import { createDeckSchema } from "./schema"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
-import { auth, currentUser } from "@clerk/nextjs/server"
+import { auth } from "@clerk/nextjs/server"
 import { Flashcard } from "./types"
-import { ReplyIcon } from "lucide-react"
 
 export async function getDecks() {
 	const { userId } = await auth();

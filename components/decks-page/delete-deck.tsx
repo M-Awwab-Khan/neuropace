@@ -40,7 +40,8 @@ export default function DeleteDeck({
         <DialogHeader>
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this deck?
+            Are you sure you want to delete this deck? This will delete all the
+            flashcards associated with this deck
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

@@ -1,14 +1,12 @@
 "use client";
 import { DeckCard } from "@/components/decks-page/deck-card";
 import { useState, useEffect } from "react";
-import { getDecks } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import CreateDeck from "./create-deck";
 import { Deck } from "@/lib/types";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "../ui/toast";
 import { Input } from "@/components/ui/input";
 import { linearSearch } from "@/lib/Algorithms/LinearSearch";
 import Image from "next/image";
@@ -20,22 +18,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createDeck } from "@/lib/actions";
 import NoDecksIllustration from "@/public/noDecks.svg";
-import { allDecksReviewProgress } from "@/lib/actions";
 import { bubbleSort } from "@/lib/Algorithms/BubbleSort";
-import { getDeckLastReviewDate } from "@/lib/actions";
 import { getAllDecksDetails } from "@/lib/actions";
 
-export default function Decks({ userId }: { userId: string }) {
-  const [decks, setDecks] = useState<Deck[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+export default function Decks({
+  userId,
+  decks: initialDecks,
+}: {
+  userId: string;
+  decks: Deck[];
+}) {
+  const [decks, setDecks] = useState<Deck[]>(initialDecks);
+  const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
-  const [deletedDeck, setDeletedDeck] = useState<Deck | null>(null);
   const [filteredDecks, setFilteredDecks] = useState<Deck[]>(decks);
-  const [decksProgress, setDecksProgress] = useState<
-    { deckId: string; progress: number }[]
-  >([]);
 
   // Compare functions for bubbleSort
   const A_Z = (a: Deck, b: Deck) => {
@@ -69,7 +66,6 @@ export default function Decks({ userId }: { userId: string }) {
     fetchDecks();
   }, []);
 
-  console.log(decksProgress);
   useEffect(() => {
     setFilteredDecks(decks);
   }, [decks]);
@@ -78,27 +74,10 @@ export default function Decks({ userId }: { userId: string }) {
     const deckToDelete = decks.find((deck) => deck.id === deckId);
     if (!deckToDelete) return;
 
-    setDeletedDeck(deckToDelete);
     setDecks(decks.filter((deck) => deck.id !== deckId));
     toast({
       title: "Deck deleted",
       description: "Deck has been successfully deleted",
-      action: (
-        <ToastAction
-          altText="Undo"
-          onClick={async () => {
-            const createdDeck = (await createDeck({
-              name: deckToDelete.name,
-              category: deckToDelete.category,
-              userId: userId,
-            })) as Deck;
-            setDecks((prevDecks) => [...prevDecks, createdDeck]);
-            setDeletedDeck(null);
-          }}
-        >
-          Undo
-        </ToastAction>
-      ),
     });
   };
 
@@ -147,12 +126,6 @@ export default function Decks({ userId }: { userId: string }) {
         compare
       )
     );
-
-    // setFilteredDecks(
-    //   decks.filter((deck) =>
-    //     deck.name.toLowerCase().includes(searchValue.toLowerCase())
-    //   )
-    // );
   };
 
   return (

@@ -1,4 +1,5 @@
 import Flashcards from "@/components/flashcards-page/flashcards";
+import { getFlashcards } from "@/lib/actions";
 import { auth } from "@clerk/nextjs/server";
 export default async function FlashcardsPage({
   params,
@@ -10,9 +11,10 @@ export default async function FlashcardsPage({
   const { userId, redirectToSignIn } = await auth();
 
   if (!userId) return redirectToSignIn();
+  const flashcards = await getFlashcards(deckId);
   return (
     <div>
-      <Flashcards userId={userId} deckId={deckId} />
+      <Flashcards userId={userId} deckId={deckId} flashcards={flashcards} />
     </div>
   );
 }
