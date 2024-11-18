@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { DesktopNavigation } from "@/components/ui/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "sonner";
-import { Analytics } from "@vercel/analytics";
+import { Analytics } from "@vercel/analytics/next";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
