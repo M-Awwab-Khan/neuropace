@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { createDeckSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateDeck } from "@/lib/actions";
+import { Switch } from "../ui/switch";
 import { Deck } from "@/lib/types";
 
 interface EditDeckProps {
@@ -30,6 +31,7 @@ export default function EditDeck({
   onDeckUpdated,
   deck,
 }: EditDeckProps) {
+  const visibilityRef = useRef(null);
   const [open, setIsOpen] = useState(false);
   const {
     register,
@@ -43,6 +45,7 @@ export default function EditDeck({
       name: deck.name,
       category: deck.category,
       userId: deck.userId,
+      visibility: deck.visibility,
     },
     mode: "onBlur",
   });
@@ -50,7 +53,13 @@ export default function EditDeck({
   const isLoading = formState.isSubmitting;
 
   const onSubmit = async (data: z.infer<typeof createDeckSchema>) => {
-    const updatedDeck = await updateDeck(deck.id, data);
+    const updatedDeck = await updateDeck(deck.id, {
+      ...data,
+      visibility: (visibilityRef.current as any).ariaChecked
+        ? "public"
+        : "private",
+    });
+
     onDeckUpdated(updatedDeck as Deck);
     setIsOpen(false);
     reset();
@@ -92,6 +101,17 @@ export default function EditDeck({
                   {errors.category.message}
                 </p>
               )}
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="visibility" className="text-right">
+                Public
+              </Label>
+              <Switch
+                ref={visibilityRef}
+                id="visibility"
+                aria-label="visibility"
+                defaultChecked={deck.visibility === "public"}
+              />
             </div>
           </div>
           <DialogFooter>

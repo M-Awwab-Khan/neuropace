@@ -165,12 +165,20 @@ export default function Decks({
       ) : (
         <div className="mt-10 flex flex-wrap gap-5 mb-10">
           {filteredDecks.map(
-            ({ id, name, last_review_date, category, progress }: any) => (
+            ({
+              id,
+              name,
+              last_review_date,
+              category,
+              progress,
+              visibility,
+            }: any) => (
               <DeckCard
                 key={id}
                 name={name}
                 category={category}
                 userId={userId}
+                visibility={visibility}
                 lastReviewDate={last_review_date}
                 onDeckDeleted={onDeckDeleted}
                 onDeckUpdated={onDeckUpdated}

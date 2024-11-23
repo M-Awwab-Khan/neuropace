@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createDeckSchema } from "@/lib/schema";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "../ui/switch";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 
@@ -30,12 +31,14 @@ export default function CreateDeck({
   onDeckCreated,
   userId,
 }: CreateDeckProps) {
+  const visibilityRef = useRef(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
     formState,
     reset,
+    setValue,
   } = useForm<z.infer<typeof createDeckSchema>>({
     resolver: zodResolver(createDeckSchema),
     defaultValues: {
@@ -50,8 +53,13 @@ export default function CreateDeck({
   const isLoading = formState.isSubmitting;
 
   const onSubmit = async (data: z.infer<typeof createDeckSchema>) => {
-    const createddeck = await createDeck(data);
-    onDeckCreated(createddeck);
+    const createdDeck = await createDeck({
+      ...data,
+      visibility: (visibilityRef.current as any).ariaChecked
+        ? "public"
+        : "private",
+    });
+    onDeckCreated(createdDeck);
     reset();
     setIsOpen(false);
     toast({
@@ -98,6 +106,12 @@ export default function CreateDeck({
                 </p>
               )}
             </div>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="private" className="text-right">
+              Public
+            </Label>
+            <Switch ref={visibilityRef} id="private" className="col-span-3" />
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>
