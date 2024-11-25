@@ -261,7 +261,7 @@ export async function getFlashcardsbyDeck(deckIds: any) {
 export async function searchPublicDecks(query: string) {
   const { rows } = await sql`
         SELECT * FROM decks
-        WHERE visibility = 'public' AND name ILIKE ${query}
+        WHERE visibility = 'public' AND name ILIKE ${"%" + query + "%"}
     `;
   return rows;
 }
