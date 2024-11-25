@@ -30,7 +30,12 @@ export default function HeroSection() {
                   variant="outline"
                   className="w-full sm:w-auto"
                 >
-                  How It Works
+                  <a
+                    href="https://github.com/M-Awwab-Khan/neuropace"
+                    target="_blank"
+                  >
+                    How It Works
+                  </a>
                 </Button>
               </div>
               <div className="grid gap-6 sm:grid-cols-3">

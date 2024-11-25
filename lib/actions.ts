@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 import { Flashcard } from "./types";
 import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export async function getDecks() {
   const { userId } = await auth();
@@ -268,6 +269,7 @@ export async function searchPublicDecks(query: string) {
 
 export async function copyDeck(originalDeckId: string) {
   const { userId } = await auth();
+  if (!userId) return redirect("/login");
   const originalDeck = await sql`
         SELECT * FROM decks WHERE id = ${originalDeckId} AND visibility = 'public';
     `;

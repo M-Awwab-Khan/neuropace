@@ -127,6 +127,7 @@ export const DesktopNavigation = (
         </NavItem>
         <div className="flex justify-items-center justify-center items-center">
           <NavItem href="/">Home</NavItem>
+          <NavItem href="/public-decks">Explore</NavItem>
 
           <SignedOut>
             <NavItem href="#">
@@ -137,7 +138,6 @@ export const DesktopNavigation = (
             </NavItem>
           </SignedOut>
           <SignedIn>
-            <NavItem href="/public-decks">Explore</NavItem>
             <NavItem href="/my-decks">My Decks</NavItem>
             <NavItem href="/quiz">Quiz</NavItem>
             <NavItem href="#">
