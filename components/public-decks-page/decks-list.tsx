@@ -7,12 +7,7 @@ import { searchPublicDecks } from "@/lib/actions";
 import { Deck } from "@/lib/types";
 import { Skeleton } from "../ui/skeleton";
 import DeckCard from "./deck-card";
-
-interface User {
-  username: string;
-  firstName: string;
-  lastName: string;
-}
+import { User } from "@/lib/types";
 
 export default function DecksList({ decks }: { decks: (Deck & User)[] }) {
   const [searchTerm, setSearchTerm] = useState("");

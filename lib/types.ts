@@ -41,3 +41,9 @@ export interface QuizType {
   answer: string;
   resources: [{ title: string; link: string }];
 }
+
+export interface User {
+  username: string;
+  firstName: string;
+  lastName: string;
+}
