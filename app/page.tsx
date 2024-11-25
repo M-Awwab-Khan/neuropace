@@ -54,7 +54,10 @@ export default function HeroSection() {
                       question: "What is capital of China",
                       answer: "Beijing",
                     },
-                    { question: "Who wrote the epic Greek poem Iliad?", answer: "Homer" },
+                    {
+                      question: "Who wrote the epic Greek poem Iliad?",
+                      answer: "Homer",
+                    },
                     {
                       question: "How did the Cold War end?",
                       answer: "The dissolution of the Soviet Union in 1991",
@@ -62,7 +65,7 @@ export default function HeroSection() {
                   ].map((card, index) => (
                     <div
                       key={index}
-                      className="border rounded-lg bg-card p-4 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+                      className="border-4 border-primary/50 rounded-lg bg-card p-4 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
                     >
                       <h3 className="font-semibold text-card-foreground">
                         {card.question}

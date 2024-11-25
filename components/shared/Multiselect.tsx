@@ -23,7 +23,7 @@ export function FancyMultiSelect({
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<Element[]>([elements[1]]);
+  const [selected, setSelected] = React.useState<Element[]>([]);
   const [inputValue, setInputValue] = React.useState("");
 
   const handleUnselect = React.useCallback((framework: Element) => {

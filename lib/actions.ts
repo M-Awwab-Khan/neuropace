@@ -272,6 +272,7 @@ export async function copyDeck(originalDeckId: string) {
         SELECT * FROM decks WHERE id = ${originalDeckId} AND visibility = 'public';
     `;
   if (!originalDeck) throw new Error("Deck not found or not public.");
+  console.log(originalDeck.rows);
   const newDeck = await sql`
         INSERT INTO decks (user_id, name, category, visibility)
         VALUES (${userId}, ${originalDeck.rows[0].name}, ${originalDeck.rows[0].category}, 'private')

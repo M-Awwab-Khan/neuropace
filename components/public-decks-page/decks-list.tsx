@@ -1,12 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Search, Copy } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { Input } from "@/components/ui/input";
 import { searchPublicDecks } from "@/lib/actions";
 import { Deck } from "@/lib/types";
-import { AvatarIcon } from "@radix-ui/react-icons";
 import { Skeleton } from "../ui/skeleton";
 import DeckCard from "./deck-card";
 
@@ -23,15 +21,18 @@ export default function DecksList({ decks }: { decks: (Deck & User)[] }) {
 
   const debouncedSearch = useDebouncedCallback(async (searchValue: string) => {
     try {
+      setLoading(true);
       if (searchValue.trim()) {
         const searchResults = await searchPublicDecks(searchValue);
-        setFilteredDecks(searchResults);
+        setFilteredDecks(searchResults as any);
       } else {
         setFilteredDecks(decks);
       }
     } catch (error) {
       console.error("Error searching decks:", error);
       setFilteredDecks(decks);
+    } finally {
+      setLoading(false);
     }
   }, 300);
 
@@ -39,11 +40,6 @@ export default function DecksList({ decks }: { decks: (Deck & User)[] }) {
     const value = e.target.value;
     setSearchTerm(value);
     debouncedSearch(value);
-  };
-
-  const handleCopyDeck = async (deckId: string) => {
-    // Implement copy functionality here
-    console.log("Copying deck:", deckId);
   };
 
   return (
@@ -60,7 +56,7 @@ export default function DecksList({ decks }: { decks: (Deck & User)[] }) {
           placeholder="Search decks..."
           value={searchTerm}
           onChange={handleSearch}
-          className="my-5 pl-14 h-14 rounded-full focus:border-primary focus:ring-primary"
+          className="my-5 pl-14 h-14 rounded-full focus:border-primary"
         />
         <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
       </div>
@@ -79,7 +75,6 @@ export default function DecksList({ decks }: { decks: (Deck & User)[] }) {
               category={category}
               owner={firstName}
               id={id}
-              onDeckCopied={handleCopyDeck}
             />
           ))}
         </div>
