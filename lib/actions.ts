@@ -29,6 +29,7 @@ export async function createDeck({
         RETURNING *
     `;
   revalidatePath("/my-decks");
+  revalidatePath("/public-decks");
   return rows[0];
 }
 
@@ -58,6 +59,8 @@ export async function deleteDeck(id: string) {
     DELETE FROM decks
     WHERE id = ${id}
   `;
+  revalidatePath("/my-decks");
+  revalidatePath("/public-decks");
 }
 
 export async function getFlashcards(deckId: string) {
@@ -300,5 +303,6 @@ export async function getPublicDecks() {
         LEFT JOIN users u ON d.user_id = u."userId"
         WHERE d.visibility = 'public'
     `;
+  console.log(rows);
   return rows;
 }
